@@ -24,7 +24,7 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
-    ){
+    ) throws EmailNotVerifiedException {
         return ResponseEntity.ok(service.authenticate(request));
     }
 

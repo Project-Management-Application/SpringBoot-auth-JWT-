@@ -1,5 +1,6 @@
 package com.midou.tutorial.student;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private String fullName;
+public class OtpVerificationRequest {
     private String email;
-    private String token;
+    private String otp;
 }

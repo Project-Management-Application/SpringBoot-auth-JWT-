@@ -36,7 +36,8 @@ public class Student implements UserDetails {
     private String email;
     private String password;
     private LocalDate dob;
-
+    private String otp;
+    private boolean enabled = false;
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -85,5 +86,9 @@ public class Student implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
     }
 }
