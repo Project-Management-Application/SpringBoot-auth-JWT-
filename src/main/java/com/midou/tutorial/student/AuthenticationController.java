@@ -28,5 +28,18 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
+    @PostMapping("/Forgotpassword")
+    public ResponseEntity<ForgotPassResponse> forgotPassword(
+            @RequestBody ForgotPassRequest request
+    ){
+        return ResponseEntity.ok(service.forgotPass(request));
+    }
+
+    @PatchMapping("/resetpassword")
+    public void resetPassword(@RequestParam String token,@RequestParam long userId,@RequestBody String newPassword ) throws EmailNotVerifiedException {
+        service.resetPassword(token,userId,newPassword);
+    }
+
+
 
 }

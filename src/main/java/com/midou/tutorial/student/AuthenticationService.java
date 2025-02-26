@@ -3,6 +3,7 @@ package com.midou.tutorial.student;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +20,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final PasswordResetTokenService passwordResetTokenService;
 
     public AuthenticationResponse register(RegisterRequest request) {
 
@@ -64,5 +66,34 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .token(jwtToken)
                 .build();
+    }
+
+    public ForgotPassResponse forgotPass(ForgotPassRequest request) {
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        var forgotPassToken = passwordResetTokenService.generatePasswordResetToken(user.getId());
+        String link = "http://localhost:3000/api/v1/auth/ResetPassword?token=" + forgotPassToken + "&userId=" + user.getId();
+        emailService.emailSenderForgetPassword(user.getEmail(), user.getFullName(), link);
+
+        return ForgotPassResponse.builder()
+                .userId(user.getId())
+                .token(forgotPassToken)
+                .build();
+    }
+
+    public void resetPassword(String token, Long userId,String newPassword) throws EmailNotVerifiedException {
+        if (!(passwordResetTokenService.isPasswordResetTokenValid(token, userId))) {
+            throw new AuthenticationServiceException("Invalid token");
+        }
+        var user = repository.findById(userId).get();
+        if (!user.isEnabled()) {
+            throw new EmailNotVerifiedException("User account is not active.");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        repository.save(user);
+
+        System.out.println("Password reset" + newPassword);
+
+
     }
 }

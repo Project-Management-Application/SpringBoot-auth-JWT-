@@ -22,12 +22,12 @@ public class EmailService {
 
 
 
-    /*public void emailSenderForgetPassword(String email,String fullName,String resetUrl) {
+    public void emailSenderForgetPassword(String email,String fullName,String resetUrl) {
         String subject = "Reset Password";
         String body = "Hello " + fullName+"This is your Reset Password link:" + resetUrl;
 
         sendMail(email, subject, body);
-    }*/
+    }
 
 
     private void sendMail(String email, String subject, String body) {
