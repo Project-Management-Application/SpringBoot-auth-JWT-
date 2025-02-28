@@ -72,7 +72,7 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         var forgotPassToken = passwordResetTokenService.generatePasswordResetToken(user.getId());
-        String link = "http://localhost:3000/api/v1/auth/ResetPassword?token=" + forgotPassToken + "&userId=" + user.getId();
+        String link = "http://localhost:3000/ResetPassword?token=" + forgotPassToken + "&userId=" + user.getId();
         emailService.emailSenderForgetPassword(user.getEmail(), user.getFullName(), link);
 
         return ForgotPassResponse.builder()
@@ -85,14 +85,15 @@ public class AuthenticationService {
         if (!(passwordResetTokenService.isPasswordResetTokenValid(token, userId))) {
             throw new AuthenticationServiceException("Invalid token");
         }
-        var user = repository.findById(userId).get();
+        var user = repository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         if (!user.isEnabled()) {
             throw new EmailNotVerifiedException("User account is not active.");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         repository.save(user);
 
-        System.out.println("Password reset" + newPassword);
+        System.out.println("Password reset for user: " +  user.getEmail());
 
 
     }

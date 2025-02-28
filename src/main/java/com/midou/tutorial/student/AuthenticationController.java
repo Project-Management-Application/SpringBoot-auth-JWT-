@@ -36,8 +36,8 @@ public class AuthenticationController {
     }
 
     @PatchMapping("/resetpassword")
-    public void resetPassword(@RequestParam String token,@RequestParam long userId,@RequestBody String newPassword ) throws EmailNotVerifiedException {
-        service.resetPassword(token,userId,newPassword);
+    public void resetPassword(@RequestParam String token,@RequestParam long userId,@RequestBody ResetPasswordRequest request ) throws EmailNotVerifiedException {
+        service.resetPassword(token,userId,request.getNewPassword());
     }
 
 
