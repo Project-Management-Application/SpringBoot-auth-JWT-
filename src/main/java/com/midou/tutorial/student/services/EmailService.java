@@ -3,6 +3,7 @@ package com.midou.tutorial.student.services;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private  final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String senderUsername;
 
     public void emailSenderOtp(String email,String otp,String fullName) {
         String subject = "Email Verification";
@@ -35,7 +39,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setFrom("medbenmaaouia1@gmail.com"); // Set sender email
+            helper.setFrom(senderUsername); // Set sender email
             helper.setTo(email); // Set recipient
             helper.setSubject(subject);
             helper.setText(body);
