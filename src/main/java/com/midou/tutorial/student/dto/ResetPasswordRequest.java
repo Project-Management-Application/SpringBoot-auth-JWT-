@@ -1,4 +1,4 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.dto;
 
 import lombok.Getter;
 import lombok.Setter;

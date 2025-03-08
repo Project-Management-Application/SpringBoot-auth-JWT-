@@ -1,4 +1,4 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ForgotPassResponse {
-    private String token;
-    private long userId;
+public class ForgotPassRequest {
+    private String email;
 }

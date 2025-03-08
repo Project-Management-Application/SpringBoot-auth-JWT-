@@ -1,9 +1,15 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.controllers;
+
+import com.midou.tutorial.student.dto.*;
+import com.midou.tutorial.student.exceptions.EmailNotVerifiedException;
+import com.midou.tutorial.student.services.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 
 @CrossOrigin(origins = "http://localhost:3000") // Adjust if needed
@@ -26,6 +32,11 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request
     ) throws EmailNotVerifiedException {
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @PostMapping("/google-authenticate")
+    public ResponseEntity<AuthenticationResponse> googleAuthenticate(@RequestParam String idToken) throws GeneralSecurityException, IOException {
+        return ResponseEntity.ok(service.authenticateWithGoogle(idToken));
     }
 
     @PostMapping("/Forgotpassword")

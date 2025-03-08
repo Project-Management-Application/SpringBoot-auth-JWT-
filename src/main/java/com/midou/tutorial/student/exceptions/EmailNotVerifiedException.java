@@ -1,4 +1,4 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.exceptions;
 
 public class EmailNotVerifiedException extends Throwable {
     public EmailNotVerifiedException(String emailNotVerified) {

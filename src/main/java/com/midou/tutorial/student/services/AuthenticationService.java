@@ -1,16 +1,28 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.services;
 
-import io.jsonwebtoken.Jwts;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Value;
+import com.midou.tutorial.student.dto.*;
+import com.midou.tutorial.student.entities.Student;
+import com.midou.tutorial.student.enums.Role;
+import com.midou.tutorial.student.exceptions.EmailNotVerifiedException;
+import com.midou.tutorial.student.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +34,15 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordResetTokenService passwordResetTokenService;
 
+    @Value("${google.client.id}")
+    private String googleClientId;
+
+
     public AuthenticationResponse register(RegisterRequest request) {
+
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email is already in use.");
+        }
 
         String otp = generateOTP();
         var user = Student.builder()
@@ -30,11 +50,11 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .otp(otp)
-                .role(Role.USER)
+                .role(request.getRole())
                 .build();
         repository.save(user);
         emailService.emailSenderOtp(user.getEmail(), user.getOtp(), user.getFullName());
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(user, true, user.getRole().name());
         return AuthenticationResponse.builder()
                 .email(user.getEmail())
                 .token(jwtToken)
@@ -60,10 +80,51 @@ public class AuthenticationService {
         if (!enabled) {
             throw new EmailNotVerifiedException("email not verified");
         }
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(user, true, user.getRole().name());
         return AuthenticationResponse.builder()
                 .fullName(user.getFullName())
                 .email(request.getEmail())
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthenticationResponse authenticateWithGoogle(String idToken) throws GeneralSecurityException, IOException {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                new NetHttpTransport(), new JacksonFactory())
+                .setAudience(Collections.singletonList(googleClientId))
+                .build();
+
+        GoogleIdToken googleIdToken = verifier.verify(idToken);
+        if (googleIdToken == null) {
+            throw new AuthenticationServiceException("Invalid Google ID Token");
+        }
+        System.out.println("verified");
+        GoogleIdToken.Payload payload = googleIdToken.getPayload();
+        String email = payload.getEmail();
+        String name = (String) payload.get("name");
+        String googleId = payload.getSubject();
+
+        Optional<Student> existingUser = repository.findByEmail(email);
+        Student user;
+
+        if (existingUser.isPresent()) {
+            user = existingUser.get();
+        } else {
+            user = Student.builder()
+                    .fullName(name)
+                    .email(email)
+                    .googleId(googleId)
+                    .role(Role.USER)
+                    .enabled(true)
+                    .isGoogleUser(true)
+                    .build();
+            repository.save(user);
+        }
+
+        var jwtToken = jwtService.generateToken(user, true, user.getRole().name());
+        return AuthenticationResponse.builder()
+                .fullName(user.getFullName())
+                .email(user.getEmail())
                 .token(jwtToken)
                 .build();
     }

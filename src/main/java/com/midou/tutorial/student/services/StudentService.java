@@ -1,5 +1,7 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.services;
 
+import com.midou.tutorial.student.entities.Student;
+import com.midou.tutorial.student.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

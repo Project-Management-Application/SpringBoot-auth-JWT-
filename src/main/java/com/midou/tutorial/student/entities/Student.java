@@ -1,5 +1,6 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.entities;
 
+import com.midou.tutorial.student.enums.Role;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -8,8 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
-import java.time.LocalDate;
-import java.time.Period;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -32,27 +32,27 @@ public class Student implements UserDetails {
             generator = "student_sequence"
     )
     private long id;
+
+    @Column(nullable = false)
     private String fullName;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String password;
-    private LocalDate dob;
+
+    private String googleId;
+
+    private boolean isGoogleUser = false;
+
     private String otp;
+
     private boolean enabled = false;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
-    @Transient
-    private Integer age;
-
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Project> projects;
-
-
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

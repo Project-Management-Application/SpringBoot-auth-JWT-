@@ -1,4 +1,4 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.services;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

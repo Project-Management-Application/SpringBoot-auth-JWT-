@@ -1,7 +1,7 @@
-package com.midou.tutorial.student;
+package com.midou.tutorial.student.controllers;
 
-import com.midou.tutorial.student.OtpVerificationRequest;
-import com.midou.tutorial.student.StudentRepository;
+import com.midou.tutorial.student.dto.OtpVerificationRequest;
+import com.midou.tutorial.student.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
