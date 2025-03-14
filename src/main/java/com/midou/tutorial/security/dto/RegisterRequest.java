@@ -1,6 +1,6 @@
-package com.midou.tutorial.student.dto;
+package com.midou.tutorial.security.dto;
 
-import com.midou.tutorial.student.enums.Role;
+import com.midou.tutorial.security.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegisterRequest {
     private Role role;
-    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
     private String email;
     private String password;
 }

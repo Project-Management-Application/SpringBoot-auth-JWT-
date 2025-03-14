@@ -1,4 +1,4 @@
-package com.midou.tutorial.student.enums;
+package com.midou.tutorial.security.enums;
 
 
 public enum Role {

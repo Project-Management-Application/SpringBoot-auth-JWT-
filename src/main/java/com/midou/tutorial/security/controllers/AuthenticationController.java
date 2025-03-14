@@ -1,8 +1,8 @@
-package com.midou.tutorial.student.controllers;
+package com.midou.tutorial.security.controllers;
 
-import com.midou.tutorial.student.dto.*;
-import com.midou.tutorial.student.exceptions.EmailNotVerifiedException;
-import com.midou.tutorial.student.services.AuthenticationService;
+import com.midou.tutorial.security.dto.*;
+import com.midou.tutorial.security.exceptions.EmailNotVerifiedException;
+import com.midou.tutorial.security.services.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 
-@CrossOrigin(origins = "http://localhost:3000") // Adjust if needed
+@CrossOrigin(origins = "http://localhost:5173") // Adjust if needed
 @RestController
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor

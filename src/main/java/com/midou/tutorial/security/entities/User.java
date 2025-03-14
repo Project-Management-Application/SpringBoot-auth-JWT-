@@ -1,6 +1,6 @@
-package com.midou.tutorial.student.entities;
+package com.midou.tutorial.security.entities;
 
-import com.midou.tutorial.student.enums.Role;
+import com.midou.tutorial.security.enums.Role;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -19,8 +19,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table
-public class Student implements UserDetails {
+@Table(name = "users")
+public class User implements UserDetails {
     @Id
     @SequenceGenerator(
             name = "student_sequence",
@@ -34,7 +34,12 @@ public class Student implements UserDetails {
     private long id;
 
     @Column(nullable = false)
-    private String fullName;
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    private String phoneNumber;
 
     @Column(unique = true, nullable = false)
     private String email;

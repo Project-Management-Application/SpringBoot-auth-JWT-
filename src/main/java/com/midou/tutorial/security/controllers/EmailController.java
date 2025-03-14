@@ -1,16 +1,16 @@
-package com.midou.tutorial.student.controllers;
+package com.midou.tutorial.security.controllers;
 
-import com.midou.tutorial.student.dto.OtpVerificationRequest;
-import com.midou.tutorial.student.repositories.StudentRepository;
+import com.midou.tutorial.security.dto.OtpVerificationRequest;
+import com.midou.tutorial.security.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin(origins = "http://localhost:3000") // Adjust if needed
+@CrossOrigin(origins = "http://localhost:5173") // Adjust if needed
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/email-verification")
 public class EmailController {
-    private final StudentRepository Repository;
+    private final UserRepository Repository;
 
     @PostMapping
     public ResponseEntity<String> VerifyOtp(@RequestBody OtpVerificationRequest Request) {

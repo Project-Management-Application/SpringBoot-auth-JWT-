@@ -1,4 +1,4 @@
-package com.midou.tutorial.student.services;
+package com.midou.tutorial.security.services;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -17,18 +17,18 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String senderUsername;
 
-    public void emailSenderOtp(String email,String otp,String fullName) {
+    public void emailSenderOtp(String email,String otp,String firstName,String lastName) {
         String subject = "Email Verification";
-        String body = "Hello " + fullName+"This is your Email Verification Code:" + otp;
+        String body = "Hello " + firstName +" "+ lastName + " This is your Email Verification Code:" + otp;
 
         sendMail(email, subject, body);
     }
 
 
 
-    public void emailSenderForgetPassword(String email,String fullName,String resetUrl) {
+    public void emailSenderForgetPassword(String email,String firstName,String lastName,String resetUrl) {
         String subject = "Reset Password";
-        String body = "Hello " + fullName+"This is your Reset Password link:" + resetUrl;
+        String body = "Hello " + firstName + " " +lastName + " This is your Reset Password link:" + resetUrl;
 
         sendMail(email, subject, body);
     }
