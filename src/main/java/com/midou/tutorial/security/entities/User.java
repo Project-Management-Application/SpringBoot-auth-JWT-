@@ -1,6 +1,7 @@
 package com.midou.tutorial.security.entities;
 
 import com.midou.tutorial.security.enums.Role;
+import com.midou.tutorial.security.enums.Subscription;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -57,6 +58,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Subscription subscription;
 
 
     @Override
