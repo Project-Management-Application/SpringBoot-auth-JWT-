@@ -1,52 +1,50 @@
 package com.midou.tutorial.backlog.services;
 
-import com.midou.tutorial.backlog.dto.CreateSprintDTO;
-import com.midou.tutorial.backlog.dto.CreateTaskDTO;
+import com.midou.tutorial.backlog.dto.sprintDTO.CreateSprintDTO;
+import com.midou.tutorial.backlog.dto.sprintDTO.UpdateSprintTitleDTO;
 import com.midou.tutorial.backlog.entities.Backlog;
 import com.midou.tutorial.backlog.entities.Sprint;
-import com.midou.tutorial.backlog.entities.Task.Task;
-import com.midou.tutorial.backlog.enums.Label;
-import com.midou.tutorial.backlog.repositories.BacklogRepository;
-import com.midou.tutorial.backlog.repositories.SprintRepository;
-import com.midou.tutorial.backlog.repositories.TaskRepository;
+import com.midou.tutorial.backlog.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class BacklogService {
+
     private final BacklogRepository backlogRepository;
     private final SprintRepository sprintRepository;
-    private final TaskRepository taskRepository;
 
-    public void createBacklog() {
+    public long createBacklog() {
         var backlog = Backlog.builder()
                 .build();
         backlogRepository.save(backlog);
+        return backlog.getBacklogId();
     }
 
-    public void createSprint(CreateSprintDTO sprint) {
+    public long createSprint(CreateSprintDTO sprint) {
         Backlog backlog = backlogRepository.findById(sprint.getBacklogId()).orElseThrow(() -> new RuntimeException("backlog not found"));
         var sprint1 = Sprint.builder()
                 .backlog(backlog)
                 .build();
         sprintRepository.save(sprint1);
+        return sprint1.getSprintId();
     }
 
-    public void createTask(CreateTaskDTO task) {
-        Backlog backlog = backlogRepository.findById(task.getBacklogId()).orElse(null);
-        Sprint sprint = sprintRepository.findById(task.getSprintId()).orElse(null);
-        boolean a = sprint != null;
-        boolean b = backlog != null;
-        if(a == b) {
-            throw new RuntimeException("task can only be linked to either sprint or backlog ");
-        }
-        var task1 = Task.builder()
-                .title(task.getTitle())
-                .label(Label.valueOf(task.getLabel()))
-                .backlog(backlog)
-                .sprint(sprint)
-                .build();
-        taskRepository.save(task1);
+    public long updateSprintTitle(UpdateSprintTitleDTO sprint) {
+        Sprint sprint1 = sprintRepository.findById(sprint.getSprintId()).orElseThrow(() -> new RuntimeException("sprint not found"));
+        sprint1.setTitle(sprint.getTitle());
+        return sprintRepository.save(sprint1).getSprintId();
     }
+
+    public long deleteSprint(long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(() -> new RuntimeException("sprint not found"));
+        sprintRepository.delete(sprint);
+        return sprint.getSprintId();
+    }
+
+
+
+
+
 }

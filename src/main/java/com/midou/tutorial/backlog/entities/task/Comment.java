@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.entities.Task;
+package com.midou.tutorial.backlog.entities.task;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +21,8 @@ public class Comment {
             generator = "comment_sequence"
     )
     private long commentId;
+
+    private String comment;
 
     @ManyToOne
     @JoinColumn(name = "commentSection_id", nullable = false)

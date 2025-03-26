@@ -1,6 +1,6 @@
 package com.midou.tutorial.backlog.repositories;
 
-import com.midou.tutorial.backlog.entities.Task.Task;
+import com.midou.tutorial.backlog.entities.task.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

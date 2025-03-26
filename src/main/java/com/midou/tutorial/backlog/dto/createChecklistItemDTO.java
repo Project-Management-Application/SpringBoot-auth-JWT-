@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateTaskDTO {
+public class createChecklistItemDTO {
+    private long checklistId;
     private String title;
-    private String label;
-    private long backlogId;
-    private long sprintId;
+
 }

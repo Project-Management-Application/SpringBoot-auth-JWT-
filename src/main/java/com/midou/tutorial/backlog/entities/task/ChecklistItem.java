@@ -1,6 +1,5 @@
-package com.midou.tutorial.backlog.entities.Task;
+package com.midou.tutorial.backlog.entities.task;
 
-import com.midou.tutorial.backlog.entities.Backlog;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +21,8 @@ public class ChecklistItem {
             generator = "checklistItem_sequence"
     )
     private long checklistItemId;
+
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "checklist_id", nullable = false)

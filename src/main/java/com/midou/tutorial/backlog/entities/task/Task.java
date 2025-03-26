@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.entities.Task;
+package com.midou.tutorial.backlog.entities.task;
 
 import com.midou.tutorial.backlog.entities.Backlog;
 import com.midou.tutorial.backlog.entities.Sprint;
@@ -6,7 +6,6 @@ import com.midou.tutorial.backlog.enums.Label;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +46,6 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "ticket_id")
     )
     private Set<Ticket> tickets = new HashSet<>();
-
 
     @ManyToOne
     @JoinColumn(name = "backlog_id", nullable = true)

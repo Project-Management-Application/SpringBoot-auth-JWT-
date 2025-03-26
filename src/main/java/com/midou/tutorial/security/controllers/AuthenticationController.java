@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 
-@CrossOrigin(origins = "http://localhost:5173") // Adjust if needed
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor

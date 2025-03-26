@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.entities.Task;
+package com.midou.tutorial.backlog.entities.task;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +23,7 @@ public class Checklist {
             generator = "checklist_sequence"
     )
     private long checklistId;
+    private String title;
 
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChecklistItem> checklistItems;

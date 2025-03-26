@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.dto;
+package com.midou.tutorial.backlog.dto.taskDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateSprintDTO {
-    private long backlogId;
+public class UpdateTaskLabelDTO {
+    private long taskId;
+    private String label;
 }

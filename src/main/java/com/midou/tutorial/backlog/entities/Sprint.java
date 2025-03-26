@@ -1,6 +1,6 @@
 package com.midou.tutorial.backlog.entities;
 
-import com.midou.tutorial.backlog.entities.Task.Task;
+import com.midou.tutorial.backlog.entities.task.Task;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +25,8 @@ public class Sprint {
             generator = "SPRINT" + "sprint_sequence"
     )
     private long sprintId;
+
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "backlog_id", nullable = false)

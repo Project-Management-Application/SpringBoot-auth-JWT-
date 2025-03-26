@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.entities.Task;
+package com.midou.tutorial.backlog.entities.task;
 
 import jakarta.persistence.*;
 import lombok.*;
