@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.midou.tutorial.security.enums.Subscription;
 import org.springframework.beans.factory.annotation.Value;
 import com.midou.tutorial.security.dto.*;
 import com.midou.tutorial.security.entities.User;
@@ -53,6 +54,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .otp(otp)
                 .role(request.getRole())
+                .subscription(Subscription.valueOf("STARTER"))
                 .build();
         repository.save(user);
         emailService.emailSenderOtp(user.getEmail(), user.getOtp(), user.getFirstName(),user.getLastName());

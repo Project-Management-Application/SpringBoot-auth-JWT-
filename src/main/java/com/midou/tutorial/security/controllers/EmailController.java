@@ -5,7 +5,6 @@ import com.midou.tutorial.security.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin(origins = "http://localhost:5173") // Adjust if needed
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/email-verification")

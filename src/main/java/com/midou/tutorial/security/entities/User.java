@@ -61,7 +61,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Subscription subscription;
+    private Subscription subscription = Subscription.STARTER;
 
 
     @Override

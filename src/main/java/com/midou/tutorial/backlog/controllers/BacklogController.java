@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -18,14 +17,17 @@ public class BacklogController {
     public long createBacklog() {
         return backlogService.createBacklog();
     }
+
     @PostMapping("/createSprint")
     public long createSprint(@RequestBody CreateSprintDTO sprint) {
         return backlogService.createSprint(sprint);
     }
+
     @PatchMapping("/updateSprintTitle")
     public long updateSprintTitle(@RequestBody UpdateSprintTitleDTO sprint){
         return backlogService.updateSprintTitle(sprint);
     }
+
     @DeleteMapping("/deleteSprint")
     public long deleteSprint(@RequestBody long sprintId){
         return backlogService.deleteSprint(sprintId);

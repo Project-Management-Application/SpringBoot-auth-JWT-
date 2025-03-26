@@ -2,6 +2,7 @@ package com.midou.tutorial.backlog.services;
 
 import com.midou.tutorial.backlog.dto.createChecklistDTO;
 import com.midou.tutorial.backlog.dto.createChecklistItemDTO;
+import com.midou.tutorial.backlog.dto.updateChecklistItemTitleDTO;
 import com.midou.tutorial.backlog.dto.updateChecklistTitleDTO;
 import com.midou.tutorial.backlog.entities.task.Checklist;
 import com.midou.tutorial.backlog.entities.task.ChecklistItem;
@@ -54,5 +55,25 @@ public class ChecklistService {
         ChecklistItem checklistItem = checklistItemRepository.findById(checklistItemId).orElseThrow(() -> new RuntimeException("checklist Item not found"));
         checklistItemRepository.delete(checklistItem);
         return checklistItem.getChecklistItemId();
+    }
+
+    public long updateChecklistItemTitle(updateChecklistItemTitleDTO checklistItem) {
+        ChecklistItem checklistItem1 = checklistItemRepository.findById(checklistItem.getChecklistItemId()).orElseThrow(() -> new RuntimeException("checklist Item not found"));
+        checklistItem1.setTitle(checklistItem.getTitle());
+        return checklistItemRepository.save(checklistItem1).getChecklistItemId();
+    }
+
+    public String checkItem(long checklistItemId) {
+        ChecklistItem checklistItem = checklistItemRepository.findById(checklistItemId).orElseThrow(() -> new RuntimeException("checklist Item not found"));
+        String response;
+        if (!checklistItem.isChecked()) {
+            checklistItem.setChecked(true);
+            response = "checked";
+        } else {
+            checklistItem.setChecked(false);
+            response = "unchecked";
+        }
+        checklistItemRepository.save(checklistItem);
+        return response;
     }
 }

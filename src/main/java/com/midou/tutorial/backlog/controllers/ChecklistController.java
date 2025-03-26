@@ -2,13 +2,12 @@ package com.midou.tutorial.backlog.controllers;
 
 import com.midou.tutorial.backlog.dto.createChecklistDTO;
 import com.midou.tutorial.backlog.dto.createChecklistItemDTO;
+import com.midou.tutorial.backlog.dto.updateChecklistItemTitleDTO;
 import com.midou.tutorial.backlog.dto.updateChecklistTitleDTO;
-import com.midou.tutorial.backlog.entities.task.Checklist;
 import com.midou.tutorial.backlog.services.ChecklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -39,6 +38,14 @@ public class ChecklistController {
     public long deleteChecklistItem(@RequestBody long checklistItemId) {
         return checklistService.deleteChecklistItem(checklistItemId);
     }
-    
 
+    @PatchMapping("/updateChecklistItemTitle")
+    public long updateChecklistItemTitle(@RequestBody updateChecklistItemTitleDTO checklistItem){
+        return checklistService.updateChecklistItemTitle(checklistItem);
+    }
+
+    @PatchMapping("/checkItem")
+    public String checkItem(@RequestBody long checklistItemId) {
+        return checklistService.checkItem(checklistItemId);
+    }
 }

@@ -24,6 +24,8 @@ public class ChecklistItem {
 
     private String title;
 
+    private boolean checked=false;
+
     @ManyToOne
     @JoinColumn(name = "checklist_id", nullable = false)
     private Checklist checklist;
