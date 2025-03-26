@@ -28,6 +28,8 @@ public class BacklogService {
                 .backlog(backlog)
                 .build();
         sprintRepository.save(sprint1);
+        sprint1.setTitle("Sprint " + sprint1.getSprintId());
+        sprintRepository.save(sprint1);
         return sprint1.getSprintId();
     }
 

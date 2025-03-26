@@ -40,7 +40,10 @@ public class TaskService {
         var commentSection1 = CommentSection.builder()
                 .task(task1)
                 .build();
+
         commentSectionRepository.save(commentSection1);
+        task1.setCommentSection(commentSection1);
+        taskRepository.save(task1);
         return task1.getTaskId();
     }
 

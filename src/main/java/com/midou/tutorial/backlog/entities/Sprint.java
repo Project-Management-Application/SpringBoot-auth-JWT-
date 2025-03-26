@@ -22,7 +22,7 @@ public class Sprint {
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "SPRINT" + "sprint_sequence"
+            generator =  "sprint_sequence"
     )
     private long sprintId;
 

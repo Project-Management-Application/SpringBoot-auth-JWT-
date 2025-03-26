@@ -1,9 +1,9 @@
 package com.midou.tutorial.backlog.controllers;
 
-import com.midou.tutorial.backlog.dto.createChecklistDTO;
-import com.midou.tutorial.backlog.dto.createChecklistItemDTO;
-import com.midou.tutorial.backlog.dto.updateChecklistItemTitleDTO;
-import com.midou.tutorial.backlog.dto.updateChecklistTitleDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.createChecklistDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.createChecklistItemDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.updateChecklistItemTitleDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.updateChecklistTitleDTO;
 import com.midou.tutorial.backlog.services.ChecklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

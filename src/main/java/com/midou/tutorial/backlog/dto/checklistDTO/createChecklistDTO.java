@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.dto;
+package com.midou.tutorial.backlog.dto.checklistDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class createChecklistItemDTO {
-    private long checklistId;
+public class createChecklistDTO {
+    private long taskId;
     private String title;
-
 }
