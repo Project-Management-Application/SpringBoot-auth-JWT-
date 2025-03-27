@@ -2,7 +2,7 @@ package com.midou.tutorial.backlog.controllers;
 
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketColorDTO;
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketTitleDTO;
-import com.midou.tutorial.backlog.dto.taskDTO.CreateTicketDTO;
+import com.midou.tutorial.backlog.dto.ticketDTO.CreateTicketDTO;
 import com.midou.tutorial.backlog.services.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

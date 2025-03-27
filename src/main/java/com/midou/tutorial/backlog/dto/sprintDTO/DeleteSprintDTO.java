@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.dto.taskDTO;
+package com.midou.tutorial.backlog.dto.sprintDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateTicketDTO {
-    private String title;
-    private String colorCode;
+public class DeleteSprintDTO {
+    private long sprintId;
 }

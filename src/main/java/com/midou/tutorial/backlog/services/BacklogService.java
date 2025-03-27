@@ -1,6 +1,7 @@
 package com.midou.tutorial.backlog.services;
 
 import com.midou.tutorial.backlog.dto.sprintDTO.CreateSprintDTO;
+import com.midou.tutorial.backlog.dto.sprintDTO.DeleteSprintDTO;
 import com.midou.tutorial.backlog.dto.sprintDTO.UpdateSprintTitleDTO;
 import com.midou.tutorial.backlog.entities.Backlog;
 import com.midou.tutorial.backlog.entities.Sprint;
@@ -39,8 +40,8 @@ public class BacklogService {
         return sprintRepository.save(sprint1).getSprintId();
     }
 
-    public long deleteSprint(long sprintId) {
-        Sprint sprint = sprintRepository.findById(sprintId).orElseThrow(() -> new RuntimeException("sprint not found"));
+    public long deleteSprint(DeleteSprintDTO sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId.getSprintId()).orElseThrow(() -> new RuntimeException("sprint not found"));
         sprintRepository.delete(sprint);
         return sprint.getSprintId();
     }

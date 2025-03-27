@@ -2,7 +2,7 @@ package com.midou.tutorial.backlog.services;
 
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketColorDTO;
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketTitleDTO;
-import com.midou.tutorial.backlog.dto.taskDTO.CreateTicketDTO;
+import com.midou.tutorial.backlog.dto.ticketDTO.CreateTicketDTO;
 import com.midou.tutorial.backlog.entities.task.Ticket;
 import com.midou.tutorial.backlog.repositories.*;
 import lombok.RequiredArgsConstructor;
