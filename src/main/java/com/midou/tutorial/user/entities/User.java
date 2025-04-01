@@ -1,7 +1,7 @@
-package com.midou.tutorial.security.entities;
+package com.midou.tutorial.user.entities;
 
-import com.midou.tutorial.security.enums.Role;
-import com.midou.tutorial.security.enums.Subscription;
+import com.midou.tutorial.user.enums.Role;
+import com.midou.tutorial.user.enums.Subscription;
 import jakarta.persistence.*;
 
 import lombok.*;

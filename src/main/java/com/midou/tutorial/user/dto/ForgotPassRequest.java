@@ -1,4 +1,4 @@
-package com.midou.tutorial.security.dto;
+package com.midou.tutorial.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

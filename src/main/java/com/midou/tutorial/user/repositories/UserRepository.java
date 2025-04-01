@@ -1,6 +1,6 @@
-package com.midou.tutorial.security.repositories;
+package com.midou.tutorial.user.repositories;
 
-import com.midou.tutorial.security.entities.User;
+import com.midou.tutorial.user.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

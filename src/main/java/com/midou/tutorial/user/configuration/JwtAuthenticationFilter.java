@@ -1,6 +1,6 @@
-package com.midou.tutorial.security.configuration;
+package com.midou.tutorial.user.configuration;
 
-import com.midou.tutorial.security.services.JwtService;
+import com.midou.tutorial.user.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

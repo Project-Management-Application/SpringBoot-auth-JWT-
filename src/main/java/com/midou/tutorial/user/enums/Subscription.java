@@ -1,4 +1,4 @@
-package com.midou.tutorial.security.enums;
+package com.midou.tutorial.user.enums;
 
 public enum Subscription {
     STARTER,

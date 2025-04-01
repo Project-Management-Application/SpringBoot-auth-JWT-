@@ -1,7 +1,7 @@
-package com.midou.tutorial.security.security;
+package com.midou.tutorial.user.security;
 
 
-import com.midou.tutorial.security.configuration.JwtAuthenticationFilter;
+import com.midou.tutorial.user.configuration.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
