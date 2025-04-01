@@ -102,7 +102,7 @@ public class WorkspaceService {
         System.out.println("Invitation saved: ID: " + invitation.getId());
 
         String subject = "Workspace Invitation";
-        String body = "Hello " + invitedUser.getFullName() + ",\n" +
+        String body = "Hello " + invitedUser.getFirstName() + invitedUser.getLastName() + ",\n" +
                 "You’ve been invited to join the workspace '" + workspace.getName() + "'.\n" +
                 "To accept, use this link: http://localhost:8090/api/v1/workspace/invitations/accept/" + invitation.getId() + "\n" +
                 "This invitation expires on " + invitation.getExpiresAt() + ".\n" +
@@ -163,7 +163,8 @@ public class WorkspaceService {
         List<MemberDTO> memberDTOs = workspace.getMembers().stream()
                 .map(wm -> new MemberDTO(
                         wm.getUser().getId(),
-                        wm.getUser().getFullName(),
+                        wm.getUser().getFirstName(),
+                        wm.getUser().getLastName(),
                         wm.getUser().getEmail()
                 ))
                 .collect(Collectors.toList());

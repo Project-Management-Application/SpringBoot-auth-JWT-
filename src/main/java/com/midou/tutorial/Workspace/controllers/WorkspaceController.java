@@ -42,7 +42,8 @@ public class WorkspaceController {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setId(workspace.getOwner().getId());
-        userDTO.setFullName(workspace.getOwner().getFullName());
+        userDTO.setFirstName(workspace.getOwner().getFirstName());
+        userDTO.setLastName(workspace.getOwner().getLastName());
         userDTO.setEmail(workspace.getOwner().getEmail());
 
 
