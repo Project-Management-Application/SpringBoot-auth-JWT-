@@ -1,16 +1,16 @@
-package com.midou.tutorial.security.services;
+package com.midou.tutorial.user.services;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.midou.tutorial.security.enums.Subscription;
+import com.midou.tutorial.user.enums.Subscription;
 import org.springframework.beans.factory.annotation.Value;
-import com.midou.tutorial.security.dto.*;
-import com.midou.tutorial.security.entities.User;
-import com.midou.tutorial.security.enums.Role;
-import com.midou.tutorial.security.exceptions.EmailNotVerifiedException;
-import com.midou.tutorial.security.repositories.UserRepository;
+import com.midou.tutorial.user.dto.*;
+import com.midou.tutorial.user.entities.User;
+import com.midou.tutorial.user.enums.Role;
+import com.midou.tutorial.user.exceptions.EmailNotVerifiedException;
+import com.midou.tutorial.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;

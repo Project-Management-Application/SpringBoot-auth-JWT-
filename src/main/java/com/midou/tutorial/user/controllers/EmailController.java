@@ -1,7 +1,7 @@
-package com.midou.tutorial.security.controllers;
+package com.midou.tutorial.user.controllers;
 
-import com.midou.tutorial.security.dto.OtpVerificationRequest;
-import com.midou.tutorial.security.repositories.UserRepository;
+import com.midou.tutorial.user.dto.OtpVerificationRequest;
+import com.midou.tutorial.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

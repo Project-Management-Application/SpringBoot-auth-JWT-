@@ -1,4 +1,4 @@
-package com.midou.tutorial.security.dto;
+package com.midou.tutorial.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;

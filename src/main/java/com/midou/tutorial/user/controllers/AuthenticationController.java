@@ -1,8 +1,8 @@
-package com.midou.tutorial.security.controllers;
+package com.midou.tutorial.user.controllers;
 
-import com.midou.tutorial.security.dto.*;
-import com.midou.tutorial.security.exceptions.EmailNotVerifiedException;
-import com.midou.tutorial.security.services.AuthenticationService;
+import com.midou.tutorial.user.dto.*;
+import com.midou.tutorial.user.exceptions.EmailNotVerifiedException;
+import com.midou.tutorial.user.services.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

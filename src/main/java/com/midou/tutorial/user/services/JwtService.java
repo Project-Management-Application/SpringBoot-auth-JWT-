@@ -1,4 +1,4 @@
-package com.midou.tutorial.security.services;
+package com.midou.tutorial.user.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
