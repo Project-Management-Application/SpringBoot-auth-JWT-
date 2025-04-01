@@ -31,8 +31,8 @@ public class TaskController {
         return taskService.updateTaskDescription(task);
     }
 
-    @DeleteMapping("/deleteTask")
-    public long deleteTask(@RequestBody long taskId){
+    @DeleteMapping("/deleteTask/{taskId}")
+    public long deleteTask(@PathVariable long taskId){
         return taskService.deleteTask(taskId);
     }
 

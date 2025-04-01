@@ -1,9 +1,9 @@
 package com.midou.tutorial.backlog.services;
 
-import com.midou.tutorial.backlog.dto.checklistDTO.createChecklistDTO;
-import com.midou.tutorial.backlog.dto.checklistDTO.createChecklistItemDTO;
-import com.midou.tutorial.backlog.dto.checklistDTO.updateChecklistItemTitleDTO;
-import com.midou.tutorial.backlog.dto.checklistDTO.updateChecklistTitleDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.CreateChecklistDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.CreateChecklistItemDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.UpdateChecklistItemTitleDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.UpdateChecklistTitleDTO;
 import com.midou.tutorial.backlog.entities.task.Checklist;
 import com.midou.tutorial.backlog.entities.task.ChecklistItem;
 import com.midou.tutorial.backlog.entities.task.Task;
@@ -21,7 +21,7 @@ public class ChecklistService {
 
     private final TaskRepository taskRepository;
 
-    public long createChecklist(createChecklistDTO checklist) {
+    public long createChecklist(CreateChecklistDTO checklist) {
         Task task = taskRepository.findById(checklist.getTaskId()).orElseThrow(() -> new RuntimeException("task not found"));
         var checklist1 = Checklist.builder()
                 .task(task)
@@ -36,13 +36,13 @@ public class ChecklistService {
         return checklist.getChecklistId();
     }
 
-    public long updateChecklistTitle(updateChecklistTitleDTO checklist) {
+    public long updateChecklistTitle(UpdateChecklistTitleDTO checklist) {
         Checklist checklist1 = checklistRepository.findById(checklist.getChecklistId()).orElseThrow(() -> new RuntimeException("checklist not found"));
         checklist1.setTitle(checklist.getTitle());
         return checklistRepository.save(checklist1).getChecklistId();
     }
 
-    public long createChecklistItem(createChecklistItemDTO checklistItem) {
+    public long createChecklistItem(CreateChecklistItemDTO checklistItem) {
         Checklist checklist = checklistRepository.findById(checklistItem.getChecklistId()).orElseThrow(() -> new RuntimeException("checklist not found"));
         var checklistItem1 = ChecklistItem.builder()
                 .checklist(checklist)
@@ -57,23 +57,16 @@ public class ChecklistService {
         return checklistItem.getChecklistItemId();
     }
 
-    public long updateChecklistItemTitle(updateChecklistItemTitleDTO checklistItem) {
+    public long updateChecklistItemTitle(UpdateChecklistItemTitleDTO checklistItem) {
         ChecklistItem checklistItem1 = checklistItemRepository.findById(checklistItem.getChecklistItemId()).orElseThrow(() -> new RuntimeException("checklist Item not found"));
         checklistItem1.setTitle(checklistItem.getTitle());
         return checklistItemRepository.save(checklistItem1).getChecklistItemId();
     }
 
-    public String checkItem(long checklistItemId) {
+    public boolean checkItem(long checklistItemId) {
         ChecklistItem checklistItem = checklistItemRepository.findById(checklistItemId).orElseThrow(() -> new RuntimeException("checklist Item not found"));
-        String response;
-        if (!checklistItem.isChecked()) {
-            checklistItem.setChecked(true);
-            response = "checked";
-        } else {
-            checklistItem.setChecked(false);
-            response = "unchecked";
-        }
+        checklistItem.setChecked(!checklistItem.isChecked());
         checklistItemRepository.save(checklistItem);
-        return response;
+        return checklistItem.isChecked();
     }
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class updateChecklistTitleDTO {
+public class UpdateChecklistTitleDTO {
     private long checklistId;
     private String title;
 }

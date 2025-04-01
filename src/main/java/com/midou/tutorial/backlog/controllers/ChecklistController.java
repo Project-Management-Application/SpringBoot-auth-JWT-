@@ -1,9 +1,9 @@
 package com.midou.tutorial.backlog.controllers;
 
-import com.midou.tutorial.backlog.dto.checklistDTO.createChecklistDTO;
-import com.midou.tutorial.backlog.dto.checklistDTO.createChecklistItemDTO;
-import com.midou.tutorial.backlog.dto.checklistDTO.updateChecklistItemTitleDTO;
-import com.midou.tutorial.backlog.dto.checklistDTO.updateChecklistTitleDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.CreateChecklistDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.CreateChecklistItemDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.UpdateChecklistItemTitleDTO;
+import com.midou.tutorial.backlog.dto.checklistDTO.UpdateChecklistTitleDTO;
 import com.midou.tutorial.backlog.services.ChecklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,37 +15,37 @@ public class ChecklistController {
     private final ChecklistService checklistService;
 
     @PostMapping("/createChecklist")
-    public long createChecklist(@RequestBody createChecklistDTO checklist) {
+    public long createChecklist(@RequestBody CreateChecklistDTO checklist) {
         return checklistService.createChecklist(checklist);
     }
 
-    @DeleteMapping("/deleteChecklist")
-    public long deleteChecklist(@RequestBody long checklistId) {
+    @DeleteMapping("/deleteChecklist/{checklistId}")
+    public long deleteChecklist(@PathVariable long checklistId) {
         return checklistService.deleteChecklist(checklistId);
     }
 
     @PatchMapping("/updateChecklistTitle")
-    public long updateChecklistTitle(@RequestBody updateChecklistTitleDTO checklist){
+    public long updateChecklistTitle(@RequestBody UpdateChecklistTitleDTO checklist){
         return checklistService.updateChecklistTitle(checklist);
     }
 
     @PostMapping("/createChecklistItem")
-    public long createChecklistItem(@RequestBody createChecklistItemDTO checklistItem) {
+    public long createChecklistItem(@RequestBody CreateChecklistItemDTO checklistItem) {
         return checklistService.createChecklistItem(checklistItem);
     }
 
-    @DeleteMapping("/deleteChecklistItem")
-    public long deleteChecklistItem(@RequestBody long checklistItemId) {
+    @DeleteMapping("/deleteChecklistItem/{checklistItemId}")
+    public long deleteChecklistItem(@PathVariable long checklistItemId) {
         return checklistService.deleteChecklistItem(checklistItemId);
     }
 
     @PatchMapping("/updateChecklistItemTitle")
-    public long updateChecklistItemTitle(@RequestBody updateChecklistItemTitleDTO checklistItem){
+    public long updateChecklistItemTitle(@RequestBody UpdateChecklistItemTitleDTO checklistItem){
         return checklistService.updateChecklistItemTitle(checklistItem);
     }
 
-    @PatchMapping("/checkItem")
-    public String checkItem(@RequestBody long checklistItemId) {
+    @PatchMapping("/checkItem/{checklistItemId}")
+    public boolean checkItem(@PathVariable long checklistItemId) {
         return checklistService.checkItem(checklistItemId);
     }
 }
