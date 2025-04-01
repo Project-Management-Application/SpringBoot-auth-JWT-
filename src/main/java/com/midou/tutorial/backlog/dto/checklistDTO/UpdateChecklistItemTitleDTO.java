@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class createChecklistDTO {
-    private long taskId;
+public class UpdateChecklistItemTitleDTO {
+    private long checklistItemId;
     private String title;
 }

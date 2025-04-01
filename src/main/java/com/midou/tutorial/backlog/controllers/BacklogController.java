@@ -1,7 +1,6 @@
 package com.midou.tutorial.backlog.controllers;
 
 import com.midou.tutorial.backlog.dto.sprintDTO.CreateSprintDTO;
-import com.midou.tutorial.backlog.dto.sprintDTO.DeleteSprintDTO;
 import com.midou.tutorial.backlog.dto.sprintDTO.UpdateSprintTitleDTO;
 import com.midou.tutorial.backlog.services.BacklogService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +28,8 @@ public class BacklogController {
         return backlogService.updateSprintTitle(sprint);
     }
 
-    @DeleteMapping("/deleteSprint")
-    public long deleteSprint(@RequestBody DeleteSprintDTO sprintId){
+    @DeleteMapping("/deleteSprint/{sprintId}")
+    public long deleteSprint(@PathVariable long sprintId){
         return backlogService.deleteSprint(sprintId);
     }
 

@@ -34,7 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
+
+        // Log incoming request details
+        System.out.println("Incoming request: " + request.getMethod() + " " + request.getRequestURI());
+        System.out.println("Authorization Header: " + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("No JWT token found in request.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,15 +48,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         userEmail = jwtService.extractUsername(jwt);
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if(jwtService.isTokenValid(jwt, userDetails)) {
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                System.out.println("JWT Token is valid");
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("Authentication set in SecurityContext: " + SecurityContextHolder.getContext().getAuthentication());
+            } else {
+                System.out.println("JWT Token is invalid or expired");
             }
+        } else {
+            System.out.println("User email not found or authentication already set: " + SecurityContextHolder.getContext().getAuthentication());
         }
+
         filterChain.doFilter(request, response);
     }
 }

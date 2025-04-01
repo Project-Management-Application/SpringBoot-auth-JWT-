@@ -24,12 +24,12 @@ public class TicketController {
     }
 
     @PatchMapping("/updateTicketColor")
-    public long updateTicketTitle(@RequestBody UpdateTicketColorDTO ticket){
+    public long updateTicketColor(@RequestBody UpdateTicketColorDTO ticket){
         return ticketService.updateTicketColor(ticket);
     }
 
-    @DeleteMapping("/deleteTicket")
-    public long deleteTicket(@RequestBody long ticketId){
+    @DeleteMapping("/deleteTicket/{ticketId}")
+    public long deleteTicket(@PathVariable long ticketId){
         return ticketService.deleteTicket(ticketId);
     }
 

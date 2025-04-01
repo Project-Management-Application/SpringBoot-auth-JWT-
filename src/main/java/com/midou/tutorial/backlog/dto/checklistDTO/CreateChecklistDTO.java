@@ -1,4 +1,4 @@
-package com.midou.tutorial.backlog.dto.sprintDTO;
+package com.midou.tutorial.backlog.dto.checklistDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteSprintDTO {
-    private long sprintId;
+public class CreateChecklistDTO {
+    private long taskId;
+    private String title;
 }

@@ -34,7 +34,7 @@ public class EmailService {
     }
 
 
-    private void sendMail(String email, String subject, String body) {
+    public void sendMail(String email, String subject, String body) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
