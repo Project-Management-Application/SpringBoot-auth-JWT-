@@ -2,8 +2,14 @@ package com.midou.tutorial.user.entities;
 
 import com.midou.tutorial.user.enums.Role;
 import com.midou.tutorial.user.enums.Subscription;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.midou.tutorial.user.enums.Role;
 import jakarta.persistence.*;
-
+import com.midou.tutorial.Workspace.entities.Workspace;
+import com.midou.tutorial.Workspace.entities.WorkspaceMember;
+import com.midou.tutorial.Projects.entities.Project;
+import com.midou.tutorial.Projects.entities.ProjectMember;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,13 +30,13 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
+            name = "user_sequence",
+            sequenceName = "user_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
+            generator = "user_sequence"
     )
     private long id;
 
@@ -102,4 +108,19 @@ public class User implements UserDetails {
     public boolean getEnabled() {
         return enabled;
     }
+
+    @OneToOne(mappedBy = "owner")
+    @JsonBackReference
+    private Workspace workspace;
+
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<WorkspaceMember> workspaceMemberships;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Project> ownedProjects;
+
+    @OneToMany(mappedBy = "user")
+    private List<ProjectMember> projectMemberships;
 }

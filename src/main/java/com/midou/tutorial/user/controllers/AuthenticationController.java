@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 
+@CrossOrigin(origins = "${frontend.url}")// Adjust if needed
 @RestController
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
@@ -44,6 +45,7 @@ public class AuthenticationController {
     ){
         return ResponseEntity.ok(service.forgotPass(request));
     }
+
     @PatchMapping("/resetpassword")
     public void resetPassword(@RequestParam String token,@RequestParam long userId,@RequestBody ResetPasswordRequest request ) throws EmailNotVerifiedException {
         service.resetPassword(token,userId,request.getNewPassword());
