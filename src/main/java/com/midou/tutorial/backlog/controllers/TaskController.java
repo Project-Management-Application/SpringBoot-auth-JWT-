@@ -1,8 +1,11 @@
 package com.midou.tutorial.backlog.controllers;
 
 import com.midou.tutorial.backlog.dto.taskDTO.*;
+import com.midou.tutorial.backlog.dto.taskDTO.TaskDetailsResponse.TaskResponse;
+import com.midou.tutorial.backlog.entities.task.Task;
 import com.midou.tutorial.backlog.services.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,5 +47,16 @@ public class TaskController {
     @DeleteMapping("/removeTicketFromTask")
     public long removeTicketFromTask(@RequestBody TicketTaskDTO taskTicket){
         return taskService.removeTicketFromTask(taskTicket);
+    }
+
+    @GetMapping("/getTaskDetails/{taskId}")
+    public TaskResponse getTaskDetails(@PathVariable Long taskId) {
+        return taskService.getTaskDetails(taskId);
+    }
+
+    @PostMapping("/moveTask")
+    public ResponseEntity<String> moveTask(moveTaskDTO request){
+        taskService.moveTask(request);
+        return ResponseEntity.ok("Task moved successfully");
     }
 }

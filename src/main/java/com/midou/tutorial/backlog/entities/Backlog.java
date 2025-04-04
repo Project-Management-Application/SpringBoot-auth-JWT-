@@ -1,5 +1,6 @@
 package com.midou.tutorial.backlog.entities;
 
+import com.midou.tutorial.Projects.entities.Project;
 import com.midou.tutorial.backlog.entities.task.Task;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,4 +33,7 @@ public class Backlog {
     @OneToMany(mappedBy = "backlog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sprint> Sprints;
 
+
+    @OneToOne(mappedBy = "backlog")
+    private Project project;
 }

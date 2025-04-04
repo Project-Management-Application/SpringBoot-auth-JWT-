@@ -1,16 +1,19 @@
 package com.midou.tutorial.Projects.controller;
 
-import com.midou.tutorial.Projects.DTO.ProjectCreateResponse;
+import com.midou.tutorial.Projects.DTO.*;
 import com.midou.tutorial.Projects.entities.Project;
 import com.midou.tutorial.Projects.enums.Visibility;
+import com.midou.tutorial.Projects.repositories.ProjectRepository;
 import com.midou.tutorial.Projects.services.ProjectService;
-import com.midou.tutorial.Projects.DTO.ProjectRequest;
-import com.midou.tutorial.Projects.DTO.CardRequest;
+import com.midou.tutorial.backlog.dto.taskDTO.TaskDetailsResponse.*;
+import com.midou.tutorial.backlog.entities.Backlog;
 import com.midou.tutorial.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "${frontend.url}")
 @RestController
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectController {
 
     private final ProjectService projectService;
+
+    private final ProjectRepository projectRepository;
 
     @PostMapping("/createProject")
     public ResponseEntity<?> createProject(@RequestBody ProjectRequest request) {

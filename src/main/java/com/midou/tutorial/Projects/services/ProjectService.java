@@ -9,12 +9,15 @@ import com.midou.tutorial.Projects.enums.Visibility;
 import com.midou.tutorial.Projects.repositories.ProjectRepository;
 import com.midou.tutorial.Workspace.entities.Workspace;
 import com.midou.tutorial.Workspace.repositories.WorkspaceRepository;
+import com.midou.tutorial.backlog.entities.Backlog;
+import com.midou.tutorial.backlog.repositories.BacklogRepository;
 import com.midou.tutorial.user.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +31,8 @@ public class ProjectService {
 
     @Autowired
     private WorkspaceRepository workspaceRepository;
+    @Autowired
+    private BacklogRepository backlogRepository;
 
     @Transactional
     public Project createProject(String name, String description, Visibility visibility, Long modelId, Long workspaceId, String backgroundImage, String backgroundColor, User owner) {
@@ -70,6 +75,14 @@ public class ProjectService {
             Model model = modelRepository.findById(modelId)
                     .orElseThrow(() -> new IllegalArgumentException("Model not found"));
             project.setModel(model);
+            if (Objects.equals(model.getName(), "Scrum Agile")){
+                var backlog1 = Backlog.builder()
+                        .project(project)
+                        .build();
+                backlogRepository.save(backlog1);
+                project.setBacklog(backlog1);
+            }
+
 
             // Copy ModelCard entities into ProjectCard entities
             List<ProjectCard> copiedCards = model.getCards().stream()
