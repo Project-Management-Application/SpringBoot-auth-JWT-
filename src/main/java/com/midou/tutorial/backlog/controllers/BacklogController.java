@@ -3,9 +3,11 @@ package com.midou.tutorial.backlog.controllers;
 import com.midou.tutorial.backlog.dto.sprintDTO.CreateSprintDTO;
 import com.midou.tutorial.backlog.dto.sprintDTO.SprintResponseDTO;
 import com.midou.tutorial.backlog.dto.sprintDTO.UpdateSprintTitleDTO;
-import com.midou.tutorial.backlog.dto.taskDTO.TaskResponseDTO;
+import com.midou.tutorial.backlog.dto.taskDTO.GetBacklogTasksDTO;
+import com.midou.tutorial.backlog.dto.taskDTO.GetSprintTasksDTO;
 import com.midou.tutorial.backlog.services.BacklogService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,11 +49,25 @@ public class BacklogController {
         return backlogService.getSprints(backlogId);
     }
 
-    @GetMapping("/getTasks/{id}")
-    public List<TaskResponseDTO> getTasks(@PathVariable long id){
-        return backlogService.getTasks(id);
+    @GetMapping("/getBacklogTasks/{backlogId}")
+    public List<GetBacklogTasksDTO> getBacklogTasks(@PathVariable long backlogId){
+        return backlogService.getTasks(backlogId);
     }
 
+    @GetMapping("/getSprintTasks/{sprintId}")
+    public List<GetSprintTasksDTO> getSprintTasks(@PathVariable long sprintId){
+        return backlogService.getSprintTasks(sprintId);
+    }
+
+    @PostMapping("startSprint/{sprintId}")
+    public ResponseEntity<String> startSprint(@PathVariable long sprintId){
+        return backlogService.startSprint(sprintId);
+    }
+
+    @PostMapping("/terminateSprint/{sprintId}")
+    public ResponseEntity<String> terminateSprint(@PathVariable long sprintId) {
+        return backlogService.terminateSprint(sprintId);
+    }
 
 
 

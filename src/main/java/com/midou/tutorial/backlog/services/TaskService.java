@@ -12,6 +12,7 @@ import com.midou.tutorial.backlog.enums.Label;
 import com.midou.tutorial.backlog.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
@@ -121,31 +122,41 @@ public class TaskService {
 
         );
     }
-
+    @Transactional
     public void moveTask(moveTaskDTO request) {
         Task task = taskRepository.findById(request.getTaskId()).orElseThrow(() -> new RuntimeException("Task not found"));
         TaskContainer sender = getContainer(request.getSenderType(), request.getSenderId());
         TaskContainer receiver = getContainer(request.getReceiverType(), request.getReceiverId());
 
-        sender.removeTask(task);
-        receiver.addTask(task);
-
-
         if (!sender.containsTask(task)) {
             throw new RuntimeException("Task not found in sender container");
         }
 
+
         if (sender instanceof Sprint) {
+            if(((Sprint) sender).getStarted() || ((Sprint) sender).getCompleted()){
+                throw new RuntimeException("sender Sprint already started or already finished");
+            }
+            sender.removeTask(task);
             sprintRepository.save((Sprint) sender);
+            task.setSprint(null);
         } else {
             backlogRepository.save((Backlog) sender);
+            task.setBacklog(null);
         }
 
         if (receiver instanceof Sprint) {
+            if(((Sprint) receiver).getStarted() || ((Sprint) receiver).getCompleted()){
+                throw new RuntimeException("receiver Sprint already started or already finished");
+            }
+            receiver.addTask(task);
             sprintRepository.save((Sprint) receiver);
+            task.setSprint((Sprint) receiver);
         } else {
             backlogRepository.save((Backlog) receiver);
+            task.setBacklog((Backlog) receiver);
         }
+        taskRepository.save(task);
     }
 
 

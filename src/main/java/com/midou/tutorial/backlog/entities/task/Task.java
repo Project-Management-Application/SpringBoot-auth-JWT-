@@ -1,11 +1,13 @@
 package com.midou.tutorial.backlog.entities.task;
 
+import com.midou.tutorial.Projects.entities.ProjectCard;
 import com.midou.tutorial.backlog.entities.Backlog;
 import com.midou.tutorial.backlog.entities.Sprint;
 import com.midou.tutorial.backlog.enums.Label;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.smartcardio.Card;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Task {
+public class Task  {
     @Id
     @SequenceGenerator(
             name = "task_sequence",
@@ -61,5 +63,9 @@ public class Task {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "commentSection_id", referencedColumnName = "commentSectionId")
     private CommentSection commentSection;
+
+    @ManyToOne
+    @JoinColumn(name = "card_id",nullable=true)
+    private ProjectCard card;
 
 }

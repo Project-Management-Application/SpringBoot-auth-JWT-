@@ -55,7 +55,7 @@ public class TaskController {
     }
 
     @PostMapping("/moveTask")
-    public ResponseEntity<String> moveTask(moveTaskDTO request){
+    public ResponseEntity<String> moveTask(@RequestBody moveTaskDTO request){
         taskService.moveTask(request);
         return ResponseEntity.ok("Task moved successfully");
     }

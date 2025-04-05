@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TaskResponseDTO {
+public class GetBacklogTasksDTO {
     private long taskId;
     private String title;
     private Label label;
     private long backlogId;
-    private long sprintId;
 }
