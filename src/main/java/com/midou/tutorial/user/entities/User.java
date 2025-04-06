@@ -62,8 +62,7 @@ public class User implements UserDetails {
     private boolean enabled = false;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(nullable = false)    private Role role;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
