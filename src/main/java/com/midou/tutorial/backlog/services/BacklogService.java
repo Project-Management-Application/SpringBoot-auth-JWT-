@@ -79,11 +79,16 @@ public class BacklogService {
         Backlog backlog = backlogRepository.findById(backlogId).orElseThrow(() -> new RuntimeException("backlog not found"));
 
         return backlog.getSprints().stream()
-                .map(sprint -> new SprintResponseDTO(sprint.getSprintId(), sprint.getTitle()))
+                .map(sprint -> new SprintResponseDTO(
+                        sprint.getSprintId(),
+                        sprint.getTitle(),
+                        sprint.getStarted(),
+                        sprint.getCompleted()
+                ))
                 .collect(Collectors.toList());
     }
 
-    public List<GetBacklogTasksDTO> getTasks(long id) {
+    public List<GetBacklogTasksDTO> getBacklogTasks(long id) {
         Backlog backlog = backlogRepository.findById(id).orElseThrow(() -> new RuntimeException("backlog not found"));
 
 

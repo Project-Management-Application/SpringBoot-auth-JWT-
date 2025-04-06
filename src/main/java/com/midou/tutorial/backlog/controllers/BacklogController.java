@@ -51,7 +51,7 @@ public class BacklogController {
 
     @GetMapping("/getBacklogTasks/{backlogId}")
     public List<GetBacklogTasksDTO> getBacklogTasks(@PathVariable long backlogId){
-        return backlogService.getTasks(backlogId);
+        return backlogService.getBacklogTasks(backlogId);
     }
 
     @GetMapping("/getSprintTasks/{sprintId}")

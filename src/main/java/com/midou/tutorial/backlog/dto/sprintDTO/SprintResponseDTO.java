@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class SprintResponseDTO {
     private long sprintId;
     private String title;
+    private Boolean started;
+    private Boolean completed;
 }
