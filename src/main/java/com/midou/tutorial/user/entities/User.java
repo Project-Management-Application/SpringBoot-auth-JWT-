@@ -4,12 +4,10 @@ import com.midou.tutorial.user.enums.Role;
 import com.midou.tutorial.user.enums.Subscription;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.midou.tutorial.user.enums.Role;
 import jakarta.persistence.*;
 import com.midou.tutorial.Workspace.entities.Workspace;
 import com.midou.tutorial.Workspace.entities.WorkspaceMember;
 import com.midou.tutorial.Projects.entities.Project;
-import com.midou.tutorial.Projects.entities.ProjectMember;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -120,6 +118,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner")
     private List<Project> ownedProjects;
 
-    @OneToMany(mappedBy = "user")
-    private List<ProjectMember> projectMemberships;
+    @ManyToMany(mappedBy = "members")
+    private List<Project> projects;
 }

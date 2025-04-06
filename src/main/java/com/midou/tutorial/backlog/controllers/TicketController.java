@@ -1,11 +1,14 @@
 package com.midou.tutorial.backlog.controllers;
 
+import com.midou.tutorial.backlog.dto.taskDTO.TaskDetailsResponse.TicketResponse;
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketColorDTO;
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketTitleDTO;
 import com.midou.tutorial.backlog.dto.ticketDTO.CreateTicketDTO;
 import com.midou.tutorial.backlog.services.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -33,4 +36,8 @@ public class TicketController {
         return ticketService.deleteTicket(ticketId);
     }
 
+    @GetMapping("/getAllTickets")
+    public List<TicketResponse> getAllTickets() {
+        return ticketService.getAllTickets();
+    }
 }

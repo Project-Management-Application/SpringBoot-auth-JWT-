@@ -1,5 +1,6 @@
 package com.midou.tutorial.backlog.services;
 
+import com.midou.tutorial.backlog.dto.taskDTO.TaskDetailsResponse.TicketResponse;
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketColorDTO;
 import com.midou.tutorial.backlog.dto.ticketDTO.UpdateTicketTitleDTO;
 import com.midou.tutorial.backlog.dto.ticketDTO.CreateTicketDTO;
@@ -7,6 +8,10 @@ import com.midou.tutorial.backlog.entities.task.Ticket;
 import com.midou.tutorial.backlog.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +44,15 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
         ticketRepository.delete(ticket);
         return ticket.getTicketId();
+    }
+
+    public List<TicketResponse> getAllTickets() {
+        return StreamSupport.stream(ticketRepository.findAll().spliterator(), false)
+                .map(ticket -> new TicketResponse(
+                        ticket.getTicketId(),
+                        ticket.getTitle(),
+                        ticket.getColorCode()
+                ))
+                .collect(Collectors.toList());
     }
 }

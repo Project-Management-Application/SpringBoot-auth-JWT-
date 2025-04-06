@@ -1,6 +1,8 @@
 package com.midou.tutorial.Projects.entities;
 
 import com.midou.tutorial.Models.entities.Model;
+import com.midou.tutorial.backlog.entities.Backlog;
+import com.midou.tutorial.backlog.entities.task.CommentSection;
 import com.midou.tutorial.user.entities.User;
 import com.midou.tutorial.Workspace.entities.Workspace;
 import com.midou.tutorial.Projects.enums.Visibility;
@@ -63,6 +65,16 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectCard> cards;
 
-    @OneToMany(mappedBy = "project")
-    private List<ProjectMember> members;
+    @ManyToMany
+    @JoinTable(
+            name = "project_members",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> members;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "backlog_id", referencedColumnName = "backlogId")
+    private Backlog backlog;
 }

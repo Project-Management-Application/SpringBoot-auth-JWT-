@@ -1,7 +1,6 @@
 package com.midou.tutorial.Projects.controller;
 
 import com.midou.tutorial.Projects.DTO.ProjectCreateResponse;
-import com.midou.tutorial.Projects.DTO.ProjectDetailsResponse;
 import com.midou.tutorial.Projects.entities.Project;
 import com.midou.tutorial.Projects.enums.Visibility;
 import com.midou.tutorial.Projects.services.ProjectService;
