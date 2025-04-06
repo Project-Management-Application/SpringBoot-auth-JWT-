@@ -1,8 +1,7 @@
 package com.midou.tutorial.Projects.entities;
 
-
-
 import com.midou.tutorial.user.entities.User;
+import com.midou.tutorial.Projects.enums.ProjectRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,4 +22,8 @@ public class ProjectMember {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProjectRole role;
 }

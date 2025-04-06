@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ModelRequest {
     private String name;
+    private String description;
     private MultipartFile backgroundImage;
     private List<String> cardNames;
 }

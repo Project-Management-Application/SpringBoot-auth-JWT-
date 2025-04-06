@@ -1,7 +1,6 @@
 package com.midou.tutorial.Models.controller;
 
 import com.midou.tutorial.Models.DTO.ModelDTO;
-import com.midou.tutorial.Models.entities.Model;
 import com.midou.tutorial.Models.services.ModelService;
 import com.midou.tutorial.Models.DTO.ModelRequest;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,36 +25,41 @@ public class ModelController {
     @PostMapping(value = "/createModel", consumes = "multipart/form-data")
     public ResponseEntity<?> createModel(
             @RequestParam("name") String name,
-            @RequestParam(value = "backgroundImage") MultipartFile backgroundImage,
+            @RequestParam("description") String description,
+            @RequestParam("backgroundImage") MultipartFile backgroundImage,
             @RequestParam("cardNames") List<String> cardNames) {
+
+        if (!StringUtils.hasText(name)) {
+            return ResponseEntity.badRequest().body("Name is required");
+        }
+
+        if (!StringUtils.hasText(description)) {
+            return ResponseEntity.badRequest().body("Description is required");
+        }
+
+        if (backgroundImage == null || backgroundImage.isEmpty()) {
+            return ResponseEntity.badRequest().body("Background image is required");
+        }
+
+        if (CollectionUtils.isEmpty(cardNames)) {
+            return ResponseEntity.badRequest().body("At least one card name is required");
+        }
+
         try {
-            if (name == null || name.isEmpty()) {
-                return ResponseEntity.badRequest().body("Name is required");
-            }
-            if (backgroundImage == null || backgroundImage.isEmpty()) {
-                return ResponseEntity.badRequest().body("Background image is required");
-            }
-            if (cardNames == null || cardNames.isEmpty()) {
-                return ResponseEntity.badRequest().body("At least one card name is required");
-            }
-
-            System.out.println("Name: " + name);
-            System.out.println("BackgroundImage: " + backgroundImage.getOriginalFilename());
-            System.out.println("CardNames: " + cardNames);
-
             ModelRequest request = new ModelRequest();
             request.setName(name);
+            request.setDescription(description);
             request.setBackgroundImage(backgroundImage);
             request.setCardNames(cardNames);
 
-            Model model = modelService.createModel(request);
-            return ResponseEntity.ok(model);
+            modelService.createModel(request);
+            return ResponseEntity.ok("Model created successfully");
         } catch (IOException e) {
-            System.err.println("Error creating model: " + e.getMessage());
-            return ResponseEntity.status(500).body("Failed to upload image: " + e.getMessage());
+            System.err.println("Error uploading image: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to upload image");
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
-            return ResponseEntity.status(500).body("An unexpected error occurred: " + e.getMessage());
+            return ResponseEntity.status(500).body("An unexpected error occurred");
         }
     }
 
