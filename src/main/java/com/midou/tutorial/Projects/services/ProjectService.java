@@ -3,8 +3,10 @@ package com.midou.tutorial.Projects.services;
 import com.midou.tutorial.Models.entities.Model;
 import com.midou.tutorial.Models.entities.ModelCard;
 import com.midou.tutorial.Models.repositories.ModelRepository;
+import com.midou.tutorial.Projects.DTO.ProjectDetailsResponse;
 import com.midou.tutorial.Projects.entities.Project;
 import com.midou.tutorial.Projects.entities.ProjectCard;
+import com.midou.tutorial.Projects.enums.ProjectRole;
 import com.midou.tutorial.Projects.enums.Visibility;
 import com.midou.tutorial.Projects.repositories.ProjectRepository;
 import com.midou.tutorial.Workspace.entities.Workspace;
@@ -101,11 +103,17 @@ public class ProjectService {
     }
 
     @Transactional
-    public void addCardToProject(Long projectId, String cardName) {
+    public ProjectCard addCardToProject(Long projectId, String cardName, User currentUser) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
-        // Create a new ProjectCard
+        boolean isEditor = project.getMembers().stream()
+                .anyMatch(member -> member.getUser().getId() == currentUser.getId() && member.getRole() == ProjectRole.EDITOR);
+
+        if (isEditor && project.getOwner().getId() != currentUser.getId()) {
+            throw new IllegalStateException("Only editors or the owner can add cards to this project.");
+        }
+
         ProjectCard card = ProjectCard.builder()
                 .name(cardName)
                 .project(project)
@@ -113,11 +121,53 @@ public class ProjectService {
 
         project.getCards().add(card);
         projectRepository.save(project);
-        System.out.println("Card '" + cardName + "' added to project ID: " + projectId);
+
+        return card;
     }
 
     public Project getProjectById(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
     }
+
+    @Transactional(readOnly = true)
+    public ProjectDetailsResponse getProjectDetails(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
+        ProjectDetailsResponse response = new ProjectDetailsResponse();
+        response.setId(project.getId());
+        response.setName(project.getName());
+        response.setDescription(project.getDescription());
+        response.setVisibility(project.getVisibility());
+        response.setBackgroundImage(project.getBackgroundImage());
+        response.setBackgroundColor(project.getBackgroundColor());
+        response.setWorkspaceId(project.getWorkspace().getId());
+        response.setOwnerId(project.getOwner().getId());
+        response.setModelId(project.getModel() != null ? project.getModel().getId() : null);
+        response.setModelBackgroundImage(project.getModel() != null ? project.getModel().getBackgroundImage() : null); // Set model's background image
+
+        List<ProjectDetailsResponse.ProjectCardDTO> cardDTOs = project.getCards().stream()
+                .map(card -> {
+                    ProjectDetailsResponse.ProjectCardDTO dto = new ProjectDetailsResponse.ProjectCardDTO();
+                    dto.setId(card.getId());
+                    dto.setName(card.getName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        response.setCards(cardDTOs);
+
+        List<ProjectDetailsResponse.ProjectMemberDTO> memberDTOs = project.getMembers().stream()
+                .map(member -> {
+                    ProjectDetailsResponse.ProjectMemberDTO dto = new ProjectDetailsResponse.ProjectMemberDTO();
+                    dto.setUserId(member.getUser().getId());
+                    dto.setRole(member.getRole());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        response.setMembers(memberDTOs);
+
+        return response;
+    }
+
 }

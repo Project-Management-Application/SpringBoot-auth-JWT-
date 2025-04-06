@@ -37,6 +37,7 @@ public class ModelService {
 
         Model model = Model.builder()
                 .name(request.getName())
+                .description(request.getDescription())
                 .backgroundImage(imageUrl)
                 .cards(cards)
                 .build();
@@ -56,6 +57,7 @@ public class ModelService {
                 .map(model -> new ModelDTO(
                         model.getId(),
                         model.getName(),
+                        model.getDescription(),
                         model.getBackgroundImage()
                 ))
                 .collect(Collectors.toList());

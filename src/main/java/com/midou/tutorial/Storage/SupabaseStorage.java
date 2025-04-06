@@ -27,17 +27,12 @@ public class SupabaseStorage {
                 .defaultHeader("Authorization", "Bearer " + serviceKey) // Use service key
                 .build();
         this.bucketName = bucketName;
-        System.out.println("Supabase URL: " + supabaseUrl);
-        System.out.println("Service Key: " + serviceKey);
-        System.out.println("Bucket Name: " + bucketName);
+
     }
 
     public String uploadImage(MultipartFile file, String fileName) throws IOException {
         byte[] fileBytes = file.getBytes();
         String uploadPath = bucketName + "/" + fileName;
-        System.out.println("Uploading to: " + uploadPath);
-        System.out.println("File size: " + fileBytes.length + " bytes");
-        System.out.println("Content type: " + file.getContentType());
 
         try {
             webClient.post()
