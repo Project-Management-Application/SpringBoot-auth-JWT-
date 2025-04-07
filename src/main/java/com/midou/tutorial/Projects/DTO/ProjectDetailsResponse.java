@@ -2,6 +2,7 @@ package com.midou.tutorial.Projects.DTO;
 
 import com.midou.tutorial.Projects.enums.ProjectRole;
 import com.midou.tutorial.Projects.enums.Visibility;
+import com.midou.tutorial.user.enums.Role;
 import lombok.Data;
 
 import java.util.List;
@@ -31,5 +32,7 @@ public class ProjectDetailsResponse {
     public static class ProjectMemberDTO {
         private Long userId;
         private ProjectRole role;
+
+
     }
 }
