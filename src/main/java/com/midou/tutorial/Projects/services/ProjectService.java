@@ -103,14 +103,15 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectCard addCardToProject(Long projectId, String cardName, User currentUser) {
+    public void addCardToProject(Long projectId, String cardName, User currentUser) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
         boolean isEditor = project.getMembers().stream()
-                .anyMatch(member -> member.getUser().getId() == currentUser.getId() && member.getRole() == ProjectRole.EDITOR);
+                .anyMatch(member -> member.getId() == currentUser.getId()
+                        && member.getRole().name().equals(ProjectRole.EDITOR.name()));
 
-        if (isEditor && project.getOwner().getId() != currentUser.getId()) {
+        if (!isEditor && project.getOwner().getId() != currentUser.getId()) {
             throw new IllegalStateException("Only editors or the owner can add cards to this project.");
         }
 
@@ -121,9 +122,9 @@ public class ProjectService {
 
         project.getCards().add(card);
         projectRepository.save(project);
-
-        return card;
+        System.out.println("Card '" + cardName + "' added to project ID: " + projectId);
     }
+
 
     public Project getProjectById(Long projectId) {
         return projectRepository.findById(projectId)
@@ -160,8 +161,8 @@ public class ProjectService {
         List<ProjectDetailsResponse.ProjectMemberDTO> memberDTOs = project.getMembers().stream()
                 .map(member -> {
                     ProjectDetailsResponse.ProjectMemberDTO dto = new ProjectDetailsResponse.ProjectMemberDTO();
-                    dto.setUserId(member.getUser().getId());
-                    dto.setRole(member.getRole());
+                    dto.setUserId(member.getId());
+                    dto.setRole(ProjectRole.valueOf(member.getRole().name()));
                     return dto;
                 })
                 .collect(Collectors.toList());
