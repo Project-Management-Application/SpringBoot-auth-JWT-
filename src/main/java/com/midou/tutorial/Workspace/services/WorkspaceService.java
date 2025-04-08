@@ -84,14 +84,29 @@ public class WorkspaceService {
                 .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
         System.out.println("Workspace found: ID: " + workspace.getId() + ", Owner ID: " + workspace.getOwner().getId());
 
-        if (workspace.getOwner().getId() != owner.getId()) {
+        // Check if the authenticated user is the workspace owner
+        if (workspace.getOwner().getId() != owner.getId()) { // Use == for primitive long comparison
             System.out.println("Access denied: Authenticated user is not the workspace owner");
             throw new IllegalStateException("Only the workspace owner can invite users.");
+        }
+
+        // Check if the email belongs to the owner (prevent self-invitation)
+        if (email.equals(owner.getEmail())) {
+            System.out.println("Cannot invite yourself to the workspace");
+            throw new IllegalArgumentException("You cannot invite yourself to your own workspace.");
         }
 
         User invitedUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         System.out.println("Invited user found: ID: " + invitedUser.getId() + ", Email: " + invitedUser.getEmail());
+
+        // Check if the invited user is already a member of the workspace
+        boolean isAlreadyMember = workspace.getMembers().stream()
+                .anyMatch(member -> member.getUser().getId() == invitedUser.getId()); // Use == for primitive long comparison
+        if (isAlreadyMember) {
+            System.out.println("User is already a member of the workspace");
+            throw new IllegalArgumentException("This user is already a member of the workspace.");
+        }
 
         WorkspaceInvitation invitation = WorkspaceInvitation.builder()
                 .workspace(workspace)
@@ -185,6 +200,37 @@ public class WorkspaceService {
 
 
         return new DashboardDTO(workspaceDTO, memberDTOs, projectDTOs);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MemberDTO> getWorkspaceMembers(Long workspaceId, User currentUser) {
+        System.out.println("WorkspaceService: Fetching members for workspace ID: " + workspaceId);
+        System.out.println("Authenticated user ID: " + currentUser.getId() + ", Email: " + currentUser.getEmail());
+
+        // Fetch the workspace
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
+        System.out.println("Workspace found: ID: " + workspace.getId() + ", Owner ID: " + workspace.getOwner().getId());
+
+        // Check if the authenticated user is the workspace owner
+        if (workspace.getOwner().getId() != currentUser.getId()) {
+            System.out.println("Access denied: Authenticated user is not the workspace owner");
+            throw new IllegalStateException("Only the workspace owner can view members.");
+        }
+
+        // Map members to DTOs, excluding the owner
+        List<MemberDTO> memberDTOs = workspace.getMembers().stream()
+                .filter(wm -> wm.getUser().getId() != workspace.getOwner().getId()) // Exclude the owner
+                .map(wm -> new MemberDTO(
+                        wm.getUser().getId(),
+                        wm.getUser().getFirstName(),
+                        wm.getUser().getLastName(),
+                        wm.getUser().getEmail()
+                ))
+                .collect(Collectors.toList());
+
+        System.out.println("Found " + memberDTOs.size() + " members (excluding owner) in workspace ID: " + workspaceId);
+        return memberDTOs;
     }
 
 }
