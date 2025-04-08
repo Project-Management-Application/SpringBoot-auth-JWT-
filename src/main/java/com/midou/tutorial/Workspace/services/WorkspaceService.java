@@ -233,4 +233,41 @@ public class WorkspaceService {
         return memberDTOs;
     }
 
+
+    @Transactional
+    public void removeMemberFromWorkspace(Long workspaceId, Long memberId, User currentUser) {
+
+        // Fetch the workspace
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
+        // Check if the authenticated user is the workspace owner
+        if (workspace.getOwner().getId() != currentUser.getId()) {
+            System.out.println("Access denied: Authenticated user is not the workspace owner");
+            throw new IllegalStateException("Only the workspace owner can remove members.");
+        }
+
+        // Prevent removing the owner
+        if (workspace.getOwner().getId() == memberId) {
+            System.out.println("Cannot remove the owner from the workspace");
+            throw new IllegalArgumentException("The owner cannot be removed from the workspace.");
+        }
+
+        // Find the member to remove
+        WorkspaceMember memberToRemove = workspace.getMembers().stream()
+                .filter(wm -> wm.getUser().getId() == memberId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Member not found in this workspace"));
+
+        // Remove the member
+        workspace.getMembers().remove(memberToRemove);
+        workspaceMemberRepository.delete(memberToRemove); // Delete from the repository
+        workspaceRepository.save(workspace); // Save the updated workspace
+
+        // Send email notification to the removed member
+        String email = memberToRemove.getUser().getEmail();
+        String subject = "Removed from Workspace";
+        String body = "Hello " + memberToRemove.getUser().getFirstName() + ",\n" +
+                "You have been removed from the workspace '" + workspace.getName() + "'.";
+        emailService.sendMail(email, subject, body);
+    }
 }

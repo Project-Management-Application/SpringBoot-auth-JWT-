@@ -109,4 +109,22 @@ public class WorkspaceController {
         }
     }
 
+    @DeleteMapping("/{workspaceId}/members/{memberId}")
+    public ResponseEntity<?> removeMemberFromWorkspace(
+            @PathVariable Long workspaceId,
+            @PathVariable Long memberId) {
+        try {
+            User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            workspaceService.removeMemberFromWorkspace(workspaceId, memberId, currentUser);
+            return ResponseEntity.ok("Member removed successfully and notified via email");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error removing member: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to remove member: " + e.getMessage());
+        }
+    }
+
 }
