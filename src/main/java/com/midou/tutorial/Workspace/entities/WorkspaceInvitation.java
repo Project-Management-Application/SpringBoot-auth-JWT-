@@ -21,11 +21,11 @@ public class WorkspaceInvitation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invited_user_id", nullable = false)
     private User invitedUser;
 
@@ -34,4 +34,7 @@ public class WorkspaceInvitation {
 
     @Column(name = "accepted", nullable = false)
     private boolean accepted = false;
+
+    @Version
+    private Long version;
 }

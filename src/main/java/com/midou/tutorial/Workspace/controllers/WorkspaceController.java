@@ -84,15 +84,28 @@ public class WorkspaceController {
         }
     }
 
-
-    @PostMapping("/invitations/accept/{invitationId}")
-    public ResponseEntity<Void> acceptInvitation(@PathVariable Long invitationId) {
+    @GetMapping("/invitations/pending")
+    public ResponseEntity<List<WorkspaceInvitationProjection>> getPendingInvitations() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        workspaceService.acceptInvitation(invitationId, user);
-        return ResponseEntity.ok().build();
+        System.out.println("Fetching pending invitations for user: " + user.getEmail());
+        List<WorkspaceInvitationProjection> invitations = workspaceService.getPendingInvitations(user);
+        System.out.println("Returning " + invitations.size() + " invitations");
+        return ResponseEntity.ok(invitations);
     }
 
+    @PostMapping("/invitations/accept/{invitationId}")
+    public ResponseEntity<WorkspaceDTO> acceptInvitation(@PathVariable Long invitationId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        WorkspaceDTO workspaceDTO = workspaceService.acceptInvitation(invitationId, user);
+        return ResponseEntity.ok(workspaceDTO);
+    }
 
+    @PostMapping("/invitations/reject/{invitationId}")
+    public ResponseEntity<Void> rejectInvitation(@PathVariable Long invitationId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        workspaceService.rejectInvitation(invitationId, user);
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/{workspaceId}/members")
     public ResponseEntity<?> getWorkspaceMembers(@PathVariable Long workspaceId) {
         try {

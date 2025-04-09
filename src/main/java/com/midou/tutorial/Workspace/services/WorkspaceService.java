@@ -1,10 +1,7 @@
 package com.midou.tutorial.Workspace.services;
 
 import com.midou.tutorial.Projects.entities.Project;
-import com.midou.tutorial.Workspace.DTO.DashboardDTO;
-import com.midou.tutorial.Workspace.DTO.MemberDTO;
-import com.midou.tutorial.Workspace.DTO.ProjectDTO;
-import com.midou.tutorial.Workspace.DTO.WorkspaceDTO;
+import com.midou.tutorial.Workspace.DTO.*;
 import com.midou.tutorial.Workspace.entities.Workspace;
 import com.midou.tutorial.Workspace.entities.WorkspaceMember;
 import com.midou.tutorial.Workspace.entities.WorkspaceInvitation;
@@ -23,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,35 +74,18 @@ public class WorkspaceService {
 
     @Transactional
     public void inviteUser(Long workspaceId, String email, User owner) {
-        System.out.println("WorkspaceService: Inviting user to workspace ID: " + workspaceId);
-        System.out.println("Authenticated user ID: " + owner.getId() + ", Email: " + owner.getEmail());
-
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
-        System.out.println("Workspace found: ID: " + workspace.getId() + ", Owner ID: " + workspace.getOwner().getId());
-
-        // Check if the authenticated user is the workspace owner
-        if (workspace.getOwner().getId() != owner.getId()) { // Use == for primitive long comparison
-            System.out.println("Access denied: Authenticated user is not the workspace owner");
+        if (workspace.getOwner().getId() != owner.getId()) {
             throw new IllegalStateException("Only the workspace owner can invite users.");
         }
-
-        // Check if the email belongs to the owner (prevent self-invitation)
         if (email.equals(owner.getEmail())) {
-            System.out.println("Cannot invite yourself to the workspace");
-            throw new IllegalArgumentException("You cannot invite yourself to your own workspace.");
+            throw new IllegalArgumentException("You cannot invite yourself.");
         }
-
         User invitedUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        System.out.println("Invited user found: ID: " + invitedUser.getId() + ", Email: " + invitedUser.getEmail());
-
-        // Check if the invited user is already a member of the workspace
-        boolean isAlreadyMember = workspace.getMembers().stream()
-                .anyMatch(member -> member.getUser().getId() == invitedUser.getId()); // Use == for primitive long comparison
-        if (isAlreadyMember) {
-            System.out.println("User is already a member of the workspace");
-            throw new IllegalArgumentException("This user is already a member of the workspace.");
+        if (workspace.getMembers().stream().anyMatch(m -> m.getUser().getId() == invitedUser.getId())) {
+            throw new IllegalArgumentException("User is already a member.");
         }
 
         WorkspaceInvitation invitation = WorkspaceInvitation.builder()
@@ -114,31 +94,49 @@ public class WorkspaceService {
                 .expiresAt(LocalDateTime.now().plusDays(7))
                 .build();
         invitationRepository.save(invitation);
-        System.out.println("Invitation saved: ID: " + invitation.getId());
 
         String subject = "Workspace Invitation";
-        String body = "Hello " + invitedUser.getFirstName() + invitedUser.getLastName() + ",\n" +
+        String body = "Hello " + invitedUser.getFirstName() + ",\n" +
                 "You’ve been invited to join the workspace '" + workspace.getName() + "'.\n" +
-                "To accept, use this link: http://localhost:8090/api/v1/workspace/invitations/accept/" + invitation.getId() + "\n" +
-                "This invitation expires on " + invitation.getExpiresAt() + ".\n" +
-                "Please log in to accept the invitation.";
+                "Please log in to Taskify to accept or reject this invitation.\n" +
+                "This invitation expires on " + invitation.getExpiresAt() + ".";
         emailService.sendMail(email, subject, body);
-        System.out.println("Invitation email sent to: " + email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<WorkspaceInvitationProjection> getPendingInvitations(User user) {
+        return invitationRepository.findPendingInvitationsByUser(user);
     }
 
     @Transactional
-    public void acceptInvitation(Long invitationId, User user) {
+    public WorkspaceDTO acceptInvitation(Long invitationId, User user) {
         WorkspaceInvitation invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(() -> new IllegalArgumentException("Invitation not found"));
         if (invitation.getInvitedUser().getId() != user.getId()) {
             throw new IllegalStateException("You can only accept your own invitations.");
         }
+        if (invitation.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Invitation has expired.");
+        }
 
+        Workspace workspace = invitation.getWorkspace();
         WorkspaceMember member = WorkspaceMember.builder()
-                .workspace(invitation.getWorkspace())
+                .workspace(workspace)
                 .user(user)
                 .build();
         workspaceMemberRepository.save(member);
+        invitationRepository.delete(invitation);
+
+        return new WorkspaceDTO(workspace.getId(), workspace.getName());
+    }
+
+    @Transactional
+    public void rejectInvitation(Long invitationId, User user) {
+        WorkspaceInvitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invitation not found"));
+        if (invitation.getInvitedUser().getId() != user.getId()) {
+            throw new IllegalStateException("You can only reject your own invitations.");
+        }
         invitationRepository.delete(invitation);
     }
 
