@@ -1,17 +1,16 @@
 package com.midou.tutorial.Projects.controller;
 
-import com.midou.tutorial.Projects.DTO.ProjectCreateResponse;
-import com.midou.tutorial.Projects.DTO.ProjectDetailsResponse;
+import com.midou.tutorial.Projects.DTO.*;
 import com.midou.tutorial.Projects.entities.Project;
-import com.midou.tutorial.Projects.enums.Visibility;
+import com.midou.tutorial.Projects.DTO.ProjectDTO;
 import com.midou.tutorial.Projects.services.ProjectService;
-import com.midou.tutorial.Projects.DTO.ProjectRequest;
-import com.midou.tutorial.Projects.DTO.CardRequest;
 import com.midou.tutorial.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "${frontend.url}")
 @RestController
@@ -102,6 +101,54 @@ public class ProjectController {
             System.err.println("Error fetching project details: " + e.getMessage());
             return ResponseEntity.status(500).body("Failed to fetch project details: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/{projectId}/invite")
+    public ResponseEntity<?> inviteUser(
+            @PathVariable Long projectId,
+            @RequestBody InviteRequest request) {
+        try {
+            if (request.getEmail() == null || request.getEmail().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+            if (request.getRole() == null) {
+                return ResponseEntity.badRequest().body("Role is required");
+            }
+
+            User owner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            projectService.inviteUser(projectId, request.getEmail(), request.getRole(), owner);
+            return ResponseEntity.ok("Invitation sent successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error inviting user: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to invite user: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/invitations/pending")
+    public ResponseEntity<List<ProjectInvitationProjection>> getPendingInvitations() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("Fetching pending project invitations for user: " + user.getEmail());
+        List<ProjectInvitationProjection> invitations = projectService.getPendingInvitations(user);
+        System.out.println("Returning " + invitations.size() + " invitations");
+        return ResponseEntity.ok(invitations);
+    }
+
+    @PostMapping("/invitations/accept/{invitationId}")
+    public ResponseEntity<ProjectDTO> acceptInvitation(@PathVariable Long invitationId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ProjectDTO projectDTO = projectService.acceptInvitation(invitationId, user);
+        return ResponseEntity.ok(projectDTO);
+    }
+
+    @PostMapping("/invitations/reject/{invitationId}")
+    public ResponseEntity<Void> rejectInvitation(@PathVariable Long invitationId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        projectService.rejectInvitation(invitationId, user);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -3,21 +3,31 @@ package com.midou.tutorial.Projects.services;
 import com.midou.tutorial.Models.entities.Model;
 import com.midou.tutorial.Models.entities.ModelCard;
 import com.midou.tutorial.Models.repositories.ModelRepository;
+import com.midou.tutorial.Projects.DTO.ProjectDTO;
 import com.midou.tutorial.Projects.DTO.ProjectDetailsResponse;
+import com.midou.tutorial.Projects.DTO.ProjectInvitationProjection;
 import com.midou.tutorial.Projects.entities.Project;
 import com.midou.tutorial.Projects.entities.ProjectCard;
+import com.midou.tutorial.Projects.entities.ProjectInvitation;
+import com.midou.tutorial.Projects.entities.ProjectMember;
 import com.midou.tutorial.Projects.enums.ProjectRole;
 import com.midou.tutorial.Projects.enums.Visibility;
+import com.midou.tutorial.Projects.repositories.ProjectInvitationRepository;
+import com.midou.tutorial.Projects.repositories.ProjectMemberRepository;
 import com.midou.tutorial.Projects.repositories.ProjectRepository;
 import com.midou.tutorial.Workspace.entities.Workspace;
 import com.midou.tutorial.Workspace.repositories.WorkspaceRepository;
 import com.midou.tutorial.backlog.entities.Backlog;
 import com.midou.tutorial.backlog.repositories.BacklogRepository;
 import com.midou.tutorial.user.entities.User;
+import com.midou.tutorial.user.repositories.UserRepository;
+import com.midou.tutorial.user.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,6 +45,14 @@ public class ProjectService {
     private WorkspaceRepository workspaceRepository;
     @Autowired
     private BacklogRepository backlogRepository;
+    @Autowired
+    private ProjectInvitationRepository projectInvitationRepository;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProjectMemberRepository projectMemberRepository;
 
     @Transactional
     public Project createProject(String name, String description, Visibility visibility, Long modelId, Long workspaceId, String backgroundImage, String backgroundColor, User owner) {
@@ -108,8 +126,9 @@ public class ProjectService {
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
         boolean isEditor = project.getMembers().stream()
-                .anyMatch(member -> member.getId() == currentUser.getId()
+                .anyMatch(member -> member.getUser().getId() == currentUser.getId()
                         && member.getRole().name().equals(ProjectRole.EDITOR.name()));
+
 
         if (!isEditor && project.getOwner().getId() != currentUser.getId()) {
             throw new IllegalStateException("Only editors or the owner can add cards to this project.");
@@ -161,7 +180,7 @@ public class ProjectService {
         List<ProjectDetailsResponse.ProjectMemberDTO> memberDTOs = project.getMembers().stream()
                 .map(member -> {
                     ProjectDetailsResponse.ProjectMemberDTO dto = new ProjectDetailsResponse.ProjectMemberDTO();
-                    dto.setUserId(member.getId());
+                    dto.setUserId(member.getUser().getId());
                     dto.setRole(ProjectRole.valueOf(member.getRole().name()));
                     return dto;
                 })
@@ -171,4 +190,101 @@ public class ProjectService {
         return response;
     }
 
+
+    @Transactional
+    public void inviteUser(Long projectId, String email, String role, User owner) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
+        if (project.getOwner().getId() != owner.getId()) {
+            throw new IllegalStateException("Only the project owner can invite users.");
+        }
+
+        if (email.equals(owner.getEmail())) {
+            throw new IllegalArgumentException("You cannot invite yourself.");
+        }
+
+        User invitedUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (project.getMembers().stream().anyMatch(m -> m.getUser().getId() == invitedUser.getId())) {
+            throw new IllegalArgumentException("User is already a member of this project.");
+        }
+
+
+
+        ProjectRole projectRole;
+        try {
+            projectRole = ProjectRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role specified. Use 'VIEWER' or 'EDITOR'.");
+        }
+
+        ProjectInvitation invitation = ProjectInvitation.builder()
+                .project(project)
+                .invitedUser(invitedUser)
+                .role(projectRole)
+                .expiresAt(LocalDateTime.now().plusDays(7))
+                .build();
+        projectInvitationRepository.save(invitation);
+
+        String subject = "Project Invitation";
+        String body = "Hello " + invitedUser.getFirstName() + ",\n" +
+                "You’ve been invited to join the project '" + project.getName() + "' as a " + projectRole + ".\n" +
+                "Please log in to Taskify to accept or reject this invitation.\n" +
+                "This invitation expires on " + invitation.getExpiresAt() + ".";
+        emailService.sendMail(email, subject, body);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectInvitationProjection> getPendingInvitations(User user) {
+        return projectInvitationRepository.findPendingInvitationsByUser(user);
+    }
+
+    @Transactional
+    public ProjectDTO acceptInvitation(Long invitationId, User userFromSecurity) {
+        ProjectInvitation invitation = projectInvitationRepository.findById(invitationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invitation not found"));
+
+        User user = userRepository.findById(userFromSecurity.getId())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // Use '==' for primitive comparison
+        if (invitation.getInvitedUser().getId() != user.getId()) {
+            throw new IllegalStateException("You can only accept your own invitations.");
+        }
+
+        if (invitation.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Invitation has expired.");
+        }
+
+        Project project = invitation.getProject();
+
+        ProjectMember member = new ProjectMember();
+        member.setProject(project);
+        member.setUser(user);
+        member.setRole(invitation.getRole());
+
+        projectMemberRepository.save(member);
+        projectInvitationRepository.delete(invitation);
+
+        return new ProjectDTO(project.getId(), project.getName());
+    }
+
+
+
+
+
+    @Transactional
+    public void rejectInvitation(Long invitationId, User user) {
+        ProjectInvitation invitation = projectInvitationRepository.findById(invitationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invitation not found"));
+
+        if (invitation.getInvitedUser().getId() != user.getId()) {
+            throw new IllegalStateException("You can only reject your own invitations.");
+        }
+
+        projectInvitationRepository.delete(invitation);
+    }
 }
+

@@ -1,5 +1,6 @@
 package com.midou.tutorial.user.entities;
 
+import com.midou.tutorial.Projects.entities.ProjectMember;
 import com.midou.tutorial.user.enums.Role;
 import com.midou.tutorial.user.enums.Subscription;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -14,7 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -118,6 +119,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner")
     private List<Project> ownedProjects;
 
-    @ManyToMany(mappedBy = "members")
-    private List<Project> projects;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectMember> projectMemberships = new ArrayList<>();
 }
