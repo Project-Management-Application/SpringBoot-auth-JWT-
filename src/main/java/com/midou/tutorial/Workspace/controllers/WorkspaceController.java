@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.midou.tutorial.user.entities.User;
@@ -106,6 +107,7 @@ public class WorkspaceController {
         workspaceService.rejectInvitation(invitationId, user);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/{workspaceId}/members")
     public ResponseEntity<?> getWorkspaceMembers(@PathVariable Long workspaceId) {
         try {
@@ -140,4 +142,18 @@ public class WorkspaceController {
         }
     }
 
+    @GetMapping("/joined-workspaces")
+    public ResponseEntity<List<WorkspaceDTO>> getUserWorkspaces(@AuthenticationPrincipal User user) {
+        List<WorkspaceDTO> workspaces = workspaceService.getUserWorkspaces(user);
+        return ResponseEntity.ok(workspaces);
+    }
+
+    // Endpoint to fetch public projects in a workspace
+    @GetMapping("/{workspaceId}/public-projects")
+    public ResponseEntity<List<ProjectDTO>> getPublicProjectsInWorkspace(
+            @PathVariable Long workspaceId,
+            @AuthenticationPrincipal User user) {
+        List<ProjectDTO> publicProjects = workspaceService.getPublicProjectsInWorkspace(workspaceId, user);
+        return ResponseEntity.ok(publicProjects);
+    }
 }

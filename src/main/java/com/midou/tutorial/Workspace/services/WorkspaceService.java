@@ -11,7 +11,7 @@ import com.midou.tutorial.Workspace.repositories.WorkspaceInvitationRepository;
 import com.midou.tutorial.user.entities.User;
 import com.midou.tutorial.user.repositories.UserRepository;
 import com.midou.tutorial.user.services.EmailService;
-import jakarta.persistence.Column;
+import com.midou.tutorial.Projects.enums.Visibility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -267,5 +267,63 @@ public class WorkspaceService {
         String body = "Hello " + memberToRemove.getUser().getFirstName() + ",\n" +
                 "You have been removed from the workspace '" + workspace.getName() + "'.";
         emailService.sendMail(email, subject, body);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<WorkspaceDTO> getUserWorkspaces(User user) {
+        System.out.println("WorkspaceService: Fetching workspaces for user ID: " + user.getId());
+
+        // Fetch all WorkspaceMember entries for the user
+        List<WorkspaceMember> memberships = workspaceMemberRepository.findByUser(user);
+
+        // Map to WorkspaceDTOs, excluding the workspace where the user is the owner
+        List<WorkspaceDTO> workspaceDTOs = memberships.stream()
+                .filter(wm -> wm.getWorkspace().getOwner().getId() != user.getId()) // Exclude workspace where user is the owner
+                .map(wm -> {
+                    Workspace workspace = wm.getWorkspace();
+                    return new WorkspaceDTO(workspace.getId(), workspace.getName());
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("Found " + workspaceDTOs.size() + " joined workspaces for user ID: " + user.getId());
+        return workspaceDTOs;
+    }
+
+    // Fetch all public projects in a workspace
+    @Transactional(readOnly = true)
+    public List<ProjectDTO> getPublicProjectsInWorkspace(Long workspaceId, User user) {
+        System.out.println("WorkspaceService: Fetching public projects for workspace ID: " + workspaceId);
+
+        // Fetch the workspace
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
+
+        // Check if the user is a member of the workspace
+        boolean isMember = workspace.getMembers().stream()
+                .anyMatch(wm -> wm.getUser().getId() == user.getId());
+        if (!isMember) {
+            System.out.println("Access denied: User ID " + user.getId() + " is not a member of workspace ID " + workspaceId);
+            throw new IllegalStateException("You must be a member of the workspace to view its projects.");
+        }
+
+        // Fetch public projects
+        List<ProjectDTO> publicProjects = workspace.getProjects().stream()
+                .filter(project -> project.getVisibility() == Visibility.PUBLIC) // Fixed with proper import
+                .map(project -> {
+                    Long projectId = project.getId();
+                    String projectName = project.getName();
+                    String projectVisibility = String.valueOf(project.getVisibility());
+                    String backgroundImage = project.getBackgroundImage();
+                    String backgroundColor = project.getBackgroundColor();
+                    Long modelId = (project.getModel() != null) ? project.getModel().getId() : null;
+                    String modelBackgroundImage = (project.getModel() != null) ? project.getModel().getBackgroundImage() : null;
+
+                    return new ProjectDTO(projectId, projectName, projectVisibility, backgroundImage, backgroundColor, modelId, modelBackgroundImage);
+                })
+                .collect(Collectors.toList());
+
+        System.out.println("Found " + publicProjects.size() + " public projects in workspace ID: " + workspaceId);
+        return publicProjects;
     }
 }

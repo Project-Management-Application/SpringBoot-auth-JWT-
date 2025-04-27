@@ -4,6 +4,7 @@ import com.midou.tutorial.Projects.DTO.*;
 import com.midou.tutorial.Projects.entities.Project;
 import com.midou.tutorial.Projects.DTO.ProjectDTO;
 import com.midou.tutorial.Projects.services.ProjectService;
+import com.midou.tutorial.Projects.services.ProjectTaskService;
 import com.midou.tutorial.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ProjectTaskService projectTaskService;
 
     @PostMapping("/createProject")
     public ResponseEntity<?> createProject(@RequestBody ProjectRequest request) {
@@ -84,6 +86,8 @@ public class ProjectController {
             return ResponseEntity.status(500).body("Failed to add card to project: " + e.getMessage());
         }
     }
+
+
 
     @GetMapping("FetchProject/{projectId}")
     public ResponseEntity<?> getProjectDetails(@PathVariable Long projectId) {
@@ -151,4 +155,80 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
+
+    @DeleteMapping("/deleteCard/{cardId}")
+    public ResponseEntity<CardOperationResponseDTO> deleteCard(@PathVariable Long cardId) {
+        try {
+            CardOperationResponseDTO response = projectService.deleteCard(cardId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error deleting card: " + e.getMessage());
+            return ResponseEntity.badRequest().body(CardOperationResponseDTO.builder()
+                    .cardId(cardId)
+                    .message("Error: " + e.getMessage())
+                    .build());
+        }
+    }
+
+    @DeleteMapping("/tasks/deleteTask/{taskId}")
+    public ResponseEntity<TaskOperationResponseDTO> deleteTask(@PathVariable Long taskId) {
+        try {
+            TaskOperationResponseDTO response = projectTaskService.deleteTask(taskId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error deleting task: " + e.getMessage());
+            return ResponseEntity.badRequest().body(TaskOperationResponseDTO.builder()
+                    .taskId(taskId)
+                    .message("Error: " + e.getMessage())
+                    .build());
+        }
+    }
+
+    @PutMapping("/tasks/updateTaskName/{taskId}/name")
+    public ResponseEntity<TaskOperationResponseDTO> updateTaskName(
+            @PathVariable Long taskId,
+            @RequestBody UpdateTaskNameRequestDTO request) {
+        try {
+            TaskOperationResponseDTO response = projectTaskService.updateTaskName(taskId, request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error updating task name: " + e.getMessage());
+            return ResponseEntity.badRequest().body(TaskOperationResponseDTO.builder()
+                    .taskId(taskId)
+                    .message("Error: " + e.getMessage())
+                    .build());
+        }
+    }
+
+    @GetMapping("/users/getUserInfo")
+    public ResponseEntity<UserInfoResponseDTO> getUserInfo() {
+        try {
+            UserInfoResponseDTO response = projectService.getUserInfo();
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error retrieving user info: " + e.getMessage());
+            return ResponseEntity.badRequest().body(UserInfoResponseDTO.builder()
+                    .id(null)
+                    .email(null)
+                    .firstName(null)
+                    .lastName(null)
+                    .build());
+        }
+    }
+
+    @GetMapping("/{projectId}/getProjectMembers")
+    public ResponseEntity<List<ProjectMemberDTO>> getProjectMembers(@PathVariable Long projectId) {
+        try {
+            List<ProjectMemberDTO> response = projectService.getProjectMembers(projectId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error retrieving project members: " + e.getMessage());
+            return ResponseEntity.badRequest().body(List.of(ProjectMemberDTO.builder()
+                    .userId(null)
+                    .email(null)
+                    .firstName(null)
+                    .lastName("Error: " + e.getMessage())
+                    .build()));
+        }
+    }
 }

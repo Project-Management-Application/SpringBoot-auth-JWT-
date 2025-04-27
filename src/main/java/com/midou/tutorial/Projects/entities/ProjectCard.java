@@ -38,12 +38,6 @@ public class ProjectCard {
     private List<Task> tasks;
 
 
-    public void addTask(Task task) {
-        if (tasks == null) {
-            tasks = new ArrayList<>();
-        }
-        tasks.add(task);
-        task.setCard(this);
-    }
+
 
 }
