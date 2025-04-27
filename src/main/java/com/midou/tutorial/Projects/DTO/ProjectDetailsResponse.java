@@ -1,18 +1,20 @@
 package com.midou.tutorial.Projects.DTO;
 
 import com.midou.tutorial.Projects.enums.ProjectRole;
-import com.midou.tutorial.Projects.enums.Visibility;
-import com.midou.tutorial.user.enums.Role;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProjectDetailsResponse {
     private Long id;
     private String name;
     private String description;
-    private Visibility visibility;
+    private String visibility;
     private String backgroundImage;
     private String backgroundColor;
     private Long workspaceId;
@@ -22,17 +24,24 @@ public class ProjectDetailsResponse {
     private List<ProjectCardDTO> cards;
     private List<ProjectMemberDTO> members;
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class ProjectCardDTO {
         private Long id;
         private String name;
+        private List<ProjectTaskSummaryDTO> tasks; // Added to include tasks
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class ProjectMemberDTO {
         private Long userId;
         private ProjectRole role;
-
-
     }
 }

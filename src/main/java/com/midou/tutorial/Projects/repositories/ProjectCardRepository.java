@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ProjectCardRepository extends JpaRepository<ProjectCard, Long> {
     List<ProjectCard> findByProject(Project project);
+
 }
